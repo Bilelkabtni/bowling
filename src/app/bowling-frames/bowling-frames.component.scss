@@ -1,0 +1,20 @@
+.pins {
+  display: flex;
+}
+
+.pin {
+  padding: 1rem;
+  border: 1px solid;
+  cursor: pointer;
+}
+
+.active {
+  background-color: aqua;
+  color: black;
+}
+
+.container {
+  display: flex;
+  padding: 0.5rem;
+  border: 1px solid;
+}
