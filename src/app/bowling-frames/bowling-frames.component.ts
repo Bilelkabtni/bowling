@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {bowling} from 'src/app/bowling-frames/bowling.data';
 
 @Component({
   selector: 'app-bowling-frames',
@@ -8,38 +9,7 @@ import {Component, OnInit} from '@angular/core';
 export class BowlingFramesComponent implements OnInit {
   pins = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-  frames: any[] = [
-    {
-      frame: [],
-      score: 0,
-      active: false,
-      spare: false
-    },
-    {
-      frame: [],
-      score: 0,
-      active: false,
-      spare: false
-    },
-    {
-      frame: [],
-      score: 0,
-      active: false,
-      spare: false
-    },
-    {
-      frame: [],
-      score: 0,
-      active: false,
-      spare: false
-    },
-    {
-      frame: [],
-      score: 0,
-      active: false,
-      spare: false
-    }
-  ];
+  frames: any[] = bowling;
 
   currentFrame = 0;
 
@@ -68,12 +38,8 @@ export class BowlingFramesComponent implements OnInit {
   private addFrames(pin: number) {
     this.activeFrame.active = false;
     if (this.activeFrame?.frame?.length !== 2) {
-      this.activeFrame.frame.push(pin);
       // make the frame sum
-      if (pin === 10) {
-        
-      }
-      this.frameIsFilled();
+      this.frameIsFilled(pin);
     }
     console.log('frames', this.frames);
   }
@@ -91,8 +57,29 @@ export class BowlingFramesComponent implements OnInit {
     }
   }
 
-  private frameIsFilled(): void {
-    if (this.activeFrame?.frame?.length === 2) {
+  private frameIsFilled(pin: number): void {
+    const sum: number = this.sumOneFrames() + pin;
+    if (sum === 10) {
+      this.activeFrame.frame.push('/');
+      this.activeFrame.score = 10 + this.lastFrame.score;
+      this.activeFrame.spare = true;
+      this.activeFrame.showScore = false;
+      this.currentFrame = this.currentFrame + 1; // next frame
+    } else {
+      if (this.lastFrame && this.lastFrame.spare) {
+        this.lastFrame.score = this.lastFrame.score + pin;
+        this.lastFrame.showScore = true;
+        this.activeFrame.frame.push(pin);
+        // this.lastFrame.spare = false;
+        // this.currentFrame = this.currentFrame + 1;
+      } else {
+        this.activeFrame.frame.push(pin);
+        // this.currentFrame = this.currentFrame + 1;
+      }
+    }
+
+    if (this.activeFrame?.frame?.length === 2 && !this.activeFrame?.spare) {
+      console.log('pin', pin);
       this.sumTowFrames();
       this.currentFrame = this.currentFrame + 1;
       this.resetPins();
