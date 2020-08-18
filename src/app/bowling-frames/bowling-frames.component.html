@@ -6,13 +6,15 @@
 
 
 <div class="container">
-  <div class="pins" *ngFor="let frame of frames; let index= index">
-    <div class="pins" *ngFor="let item of frame.frame; let index= index">
-      <p class="pin" [ngClass]="{'active': frame.active}">
-        <span>{{item}}</span>
+  <div class="pins mgl"
+       [ngClass]="{'active': frame.active }"
+       *ngFor="let frame of frames; let index= index">
+    <div class="pins" *ngFor="let item of frame.frame; let index= index; trackBy:trackById">
+      <p class="pin">
+        <span>{{item === 10 ? 'x' : item}}</span>
       </p>
     </div>
 <!--    <span *ngIf="sumOfFrame > 0">{{sumOfFrame}}</span>-->
-    <span *ngIf="frame?.frame?.length === 2 && frame?.score !== 0 && frame?.showScore">{{frame?.score}}</span>
+    <span *ngIf="frame?.score !== 0 && frame?.showScore">{{frame?.score}}</span>
   </div>
 </div>
