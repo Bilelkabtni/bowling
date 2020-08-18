@@ -60,6 +60,7 @@ export class BowlingFramesComponent implements OnInit {
   private frameIsFilled(pin: number): void {
     const sum: number = this.sumOneFrames() + pin;
     if (sum === 10) {
+      console.log('pin 3');
       this.activeFrame.frame.push('/');
       this.activeFrame.score = 10 + this.lastFrame.score;
       this.activeFrame.spare = true;
@@ -69,17 +70,16 @@ export class BowlingFramesComponent implements OnInit {
       if (this.lastFrame && this.lastFrame.spare) {
         this.lastFrame.score = this.lastFrame.score + pin;
         this.lastFrame.showScore = true;
+        this.lastFrame.spare = false;
         this.activeFrame.frame.push(pin);
-        // this.lastFrame.spare = false;
-        // this.currentFrame = this.currentFrame + 1;
+        console.log('pin 1');
       } else {
         this.activeFrame.frame.push(pin);
-        // this.currentFrame = this.currentFrame + 1;
+        console.log('pin 2');
       }
     }
 
-    if (this.activeFrame?.frame?.length === 2 && !this.activeFrame?.spare) {
-      console.log('pin', pin);
+    if (this.activeFrame?.frame?.length === 2 && !this.lastFrame?.spare) {
       this.sumTowFrames();
       this.currentFrame = this.currentFrame + 1;
       this.resetPins();
