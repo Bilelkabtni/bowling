@@ -7,7 +7,7 @@ import {bowling} from 'src/app/bowling-frames/bowling.data';
   styleUrls: ['./bowling-frames.component.scss']
 })
 export class BowlingFramesComponent implements OnInit {
-  pins = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  pins = this.fillPins();
 
   frames: any[] = bowling;
 
@@ -15,6 +15,10 @@ export class BowlingFramesComponent implements OnInit {
   hdcpScore = 0;
 
   constructor() {
+  }
+
+  fillPins(): number[] {
+    return Array.from(Array(11).keys());
   }
 
   get activeFrame(): any {
@@ -29,6 +33,10 @@ export class BowlingFramesComponent implements OnInit {
     return this.activeFrame?.frame?.length || 0;
   }
 
+  get filledFrame(): number {
+    return this.activeFrame?.frame?.filter(item => item !== null).length;
+  }
+
   ngOnInit(): void {
   }
 
@@ -40,7 +48,6 @@ export class BowlingFramesComponent implements OnInit {
       }
     }
     this.addFrames(pin);
-    // this.resetPins();
   }
 
   deactivateFrame(): void {
@@ -81,17 +88,17 @@ export class BowlingFramesComponent implements OnInit {
   }
 
   private addFrames(pin: number) {
-    if (this.frameSize !== 2) {
-      // make the frame sum
-      this.frameIsFilled(pin);
-    }
+    // make the frame sum
+    this.frameIsFilled(pin);
 
-    if (this.frameSize === 2) {
+    if (this.filledFrame === 1) {
+      this.activeFrame.frame[1] = pin;
       this.sumOfFrames();
       this.resetPins();
       this.currentFrame = this.currentFrame + 1;
+    } else {
+      this.activeFrame.frame[0] = pin;
     }
-
     console.log('frames', this.frames);
   }
 
@@ -104,18 +111,34 @@ export class BowlingFramesComponent implements OnInit {
     }
   }
 
-  private addSpare(pin: number) {
+  private addSpare(pin: number): void {
     console.log('addSpare', pin);
     this.activeFrame.score = 10 + this.lastFrame.score;
     this.activeFrame.spare = true;
     this.activeFrame.showScore = false;
   }
 
-  private showSpare(): void {
+  private showSpare(pin: number): void {
     this.lastFrame.score = this.lastFrame.score + pin;
     this.lastFrame.showScore = true;
     this.lastFrame.spare = false;
   }
+
+  private addStrike(pin: number): void {
+    console.log('add strike');
+    this.activeFrame.score = 10 + this.lastFrame.score;
+    // this.lastFrame.score = this.lastFrame.score + this.sumOneFrames();
+    this.activeFrame.strike = true;
+    this.activeFrame.showScore = false;
+    this.activeFrame.frame[1].push(null);
+    // this.currentFrame = this.currentFrame + 1;
+  }
+
+  // private showStrike(pin: number): void {
+  //   this.lastFrame.score = 10 + this.lastFrame.score + this.sumOneFrames();
+  //   this.lastFrame.showScore = true;
+  //   this.lastFrame.strike = false;
+  // }
 
 
   private frameIsFilled(pin: number): void {
@@ -127,15 +150,17 @@ export class BowlingFramesComponent implements OnInit {
       this.addSpare(pin);
     }
 
-    if (this.lastFrame && this.lastFrame.spare) {
-      this.showSpare();
+    if (pin === 10 && this.lastFrame) {
+      this.addStrike(pin);
     }
 
-    this.activeFrame.frame.push(pin);
+    if (this.lastFrame?.spare) {
+      this.showSpare(pin);
+    }
   }
 
   private resetPins(): void {
-    this.pins = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    this.pins = this.fillPins();
   }
 
 }

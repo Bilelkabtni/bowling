@@ -1,7 +1,7 @@
 export const bowling = [
   {
     id: 1,
-    frame: [],
+    frame: [null, null],
     score: 0,
     active: false,
     showScore: true,
@@ -10,7 +10,7 @@ export const bowling = [
   },
   {
     id: 2,
-    frame: [],
+    frame: [null, null],
     score: 0,
     active: false,
     showScore: true,
@@ -19,7 +19,7 @@ export const bowling = [
   },
   {
     id: 3,
-    frame: [],
+    frame: [null, null],
     score: 0,
     active: false,
     showScore: true,
@@ -28,7 +28,7 @@ export const bowling = [
   },
   {
     id: 4,
-    frame: [],
+    frame: [null, null],
     score: 0,
     active: false,
     showScore: true,
@@ -37,7 +37,7 @@ export const bowling = [
   },
   {
     id: 5,
-    frame: [],
+    frame: [null, null],
     score: 0,
     active: false,
     showScore: true,
@@ -46,7 +46,7 @@ export const bowling = [
   },
   {
     id: 6,
-    frame: [],
+    frame: [null, null],
     score: 0,
     active: false,
     showScore: true,
@@ -55,7 +55,7 @@ export const bowling = [
   },
   {
     id: 7,
-    frame: [],
+    frame: [null, null],
     score: 0,
     active: false,
     showScore: true,
@@ -64,7 +64,7 @@ export const bowling = [
   },
   {
     id: 8,
-    frame: [],
+    frame: [null, null],
     score: 0,
     active: false,
     showScore: true,
@@ -73,7 +73,7 @@ export const bowling = [
   },
   {
     id: 9,
-    frame: [],
+    frame: [null, null],
     score: 0,
     active: false,
     showScore: true,
@@ -82,7 +82,7 @@ export const bowling = [
   },
   {
     id: 10,
-    frame: [],
+    frame: [null, null, null],
     score: 0,
     active: false,
     showScore: true,
