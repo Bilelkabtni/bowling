@@ -1,4 +1,6 @@
-export const bowling = [
+import {Bowling} from 'src/app/bowling-frames/bowling.interface';
+
+export const bowling: Bowling[] = [
   {
     id: 1,
     frame: [null, null],
