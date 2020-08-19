@@ -122,27 +122,51 @@ export class BowlingFramesComponent {
   }
 
   private calculateBonusScore(pin: number): void {
-    if (!this.activeFrame?.strike) {
+    if (!this.activeFrame?.strike && !this.lastFrame?.strike) {
       if (this.filledFrame === 1) {
         this.activeFrame.frame[1] = pin;
         this.sumOfFrames();
-        this.currentFrame = this.currentFrame + 1;
+        this.incrementFrame();
         this.resetPins();
       } else {
-        console.log(2);
         this.activeFrame.frame[0] = pin;
       }
     } else {
-      if (!this.lastFrame?.strike) {
-        this.currentFrame = this.currentFrame + 1;
-      }
-      // this.activateFrame();
-      // this.activeFrame.strike = false;
 
-      // this.lastFrame.score = this.lastFrame.score + this.sumOneFrames();
+      if (this.filledFrame === 0) {
+        this.activeFrame.frame[0] = pin;
+        // this.lastFrame.strike = false;
+        // this.sumOfFrames();
+        // this.activeFrame.strike = false;
+      } else {
+        this.activeFrame.frame[1] = pin;
+        // this.decrementFrame()
+        // this.lastFrame.score = this.lastFrame.score + this.sumOneFrames();
+        this.activeFrame.score = this.lastFrame.score + this.sumOneFrames();
+        // console.log('this.activeFrame.score', this.activeFrame.score)
+        console.log('this.activeFrame.id', this.activeFrame.id)
+        console.log('this.lastFrame.id', this.lastFrame.id)
+        // this.activeFrame.score +=  this.activeFrame.frame[0] +  this.activeFrame.frame[1];
+      }
+
+      if (!this.lastFrame?.strike) {
+        this.incrementFrame();
+      }
+
+      // console.log('activeFrame', this.activeFrame)
+      // console.log('filledFrame', this.filledFrame)
+
       // this.lastFrame.strike = false;
-      console.log('activeFrame', this.activeFrame);
+      // console.log('activeFrame', this.activeFrame);
     }
+  }
+
+  incrementFrame() {
+    this.currentFrame = this.currentFrame + 1;
+  }
+
+  decrementFrame() {
+    this.currentFrame = this.currentFrame - 1;
   }
 
   private addFrames(pin: number) {
