@@ -12,6 +12,7 @@ export class BowlingFramesComponent implements OnInit {
   frames: any[] = bowling;
 
   currentFrame = 0;
+  hdcpScore = 0;
 
   constructor() {
   }
@@ -22,6 +23,10 @@ export class BowlingFramesComponent implements OnInit {
 
   get lastFrame(): any {
     return this.frames[this.currentFrame - 1];
+  }
+
+  get frameSize(): number {
+    return this.activeFrame?.frame?.length || 0;
   }
 
   ngOnInit(): void {
@@ -35,6 +40,40 @@ export class BowlingFramesComponent implements OnInit {
       }
     }
     this.addFrames(pin);
+    // this.resetPins();
+  }
+
+  deactivateFrame(): void {
+    this.frames.map(frame => frame.active = false);
+  }
+
+  activateFrame(): void {
+    this.deactivateFrame();
+    this.activeFrame.active = true;
+  }
+
+  selectFrame(index: number): void {
+    console.log('ccc', index);
+    this.currentFrame = index;
+    this.activateFrame();
+    if (this.activeFrame.frames?.frame.length > 0) {
+      console.log('pi');
+      this.resetFrame();
+    }
+  }
+
+  trackById(frame: any): number {
+    return frame.id;
+  }
+
+  resetFrame(): void {
+    this.activeFrame.frame = [];
+    this.activeFrame.score = 0;
+    this.activeFrame.active = false;
+    this.activeFrame.showScore = true;
+    this.activeFrame.strike = false;
+    this.activeFrame.spare = false;
+    this.resetPins();
   }
 
   private sumOneFrames(): number {
@@ -42,11 +81,17 @@ export class BowlingFramesComponent implements OnInit {
   }
 
   private addFrames(pin: number) {
-    // this.activeFrame.active = false;
-    if (this.activeFrame?.frame?.length !== 2) {
+    if (this.frameSize !== 2) {
       // make the frame sum
       this.frameIsFilled(pin);
     }
+
+    if (this.frameSize === 2) {
+      this.sumOfFrames();
+      this.resetPins();
+      this.currentFrame = this.currentFrame + 1;
+    }
+
     console.log('frames', this.frames);
   }
 
@@ -60,61 +105,33 @@ export class BowlingFramesComponent implements OnInit {
   }
 
   private addSpare(pin: number) {
-    const sum: number = this.sumOneFrames() + pin;
-    if (sum === 10) {
-      this.activeFrame.frame.push('/');
-      this.activeFrame.score = 10 + this.lastFrame.score;
-      this.activeFrame.spare = true;
-      this.activeFrame.showScore = false;
-      this.currentFrame = this.currentFrame + 1; // next frame
-    } else {
-      if (this.lastFrame && this.lastFrame.spare) {
-        this.lastFrame.score = this.lastFrame.score + pin;
-        this.lastFrame.showScore = true;
-        this.lastFrame.spare = false;
-        this.activeFrame.frame.push(pin);
-      } else {
-        this.activeFrame.frame.push(pin);
-      }
-    }
+    console.log('addSpare', pin);
+    this.activeFrame.score = 10 + this.lastFrame.score;
+    this.activeFrame.spare = true;
+    this.activeFrame.showScore = false;
   }
 
-
-  private addStrike(pin: number) {
-    if (pin === 10 && this.lastFrame) {
-      console.log('strick')
-      this.activeFrame.frame.push(10);
-      this.activeFrame.strike = true;
-      this.activeFrame.showScore = false;
-      this.activeFrame.score = (10 + this.lastFrame.score);
-      this.currentFrame = this.currentFrame + 1;
-    } else {
-      if (this.lastFrame && this.lastFrame.strike) {
-        this.lastFrame.showScore = true;
-        this.lastFrame.score = (10 + this.lastFrame.score);
-      }
-    }
+  private showSpare(): void {
+    this.lastFrame.score = this.lastFrame.score + pin;
+    this.lastFrame.showScore = true;
+    this.lastFrame.spare = false;
   }
+
 
   private frameIsFilled(pin: number): void {
-    // this.lastFrame.active = false;
-    if (pin === 10) {
-      this.addStrike(pin);
-    } else {
-      // spare logic
+    // activate frame
+    this.activateFrame();
+
+    const sum: number = this.sumOneFrames() + pin;
+    if (sum === 10 && this.lastFrame) {
       this.addSpare(pin);
     }
 
-    if (this.activeFrame?.frame?.length === 2) {
-      this.activeFrame.active = true;
-      this.sumOfFrames();
-      this.currentFrame = this.currentFrame + 1;
-      this.resetPins();
+    if (this.lastFrame && this.lastFrame.spare) {
+      this.showSpare();
     }
-  }
 
-  trackById(frame: any): number {
-    return frame.id;
+    this.activeFrame.frame.push(pin);
   }
 
   private resetPins(): void {

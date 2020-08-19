@@ -7,6 +7,7 @@
 
 <div class="container">
   <div class="pins mgl"
+       (click)="selectFrame(index)"
        [ngClass]="{'active': frame.active }"
        *ngFor="let frame of frames; let index= index">
     <div class="pins" *ngFor="let item of frame.frame; let index= index; trackBy:trackById">
@@ -17,4 +18,5 @@
 <!--    <span *ngIf="sumOfFrame > 0">{{sumOfFrame}}</span>-->
     <span *ngIf="frame?.score !== 0 && frame?.showScore">{{frame?.score}}</span>
   </div>
+<!--  <h2>{{hdcpScore}}</h2>-->
 </div>
