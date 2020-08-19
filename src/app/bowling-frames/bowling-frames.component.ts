@@ -17,10 +17,6 @@ export class BowlingFramesComponent implements OnInit {
   constructor() {
   }
 
-  fillPins(): number[] {
-    return Array.from(Array(11).keys());
-  }
-
   get activeFrame(): any {
     return this.frames[this.currentFrame];
   }
@@ -35,6 +31,10 @@ export class BowlingFramesComponent implements OnInit {
 
   get filledFrame(): number {
     return this.activeFrame?.frame?.filter(item => item !== null).length;
+  }
+
+  fillPins(): number[] {
+    return Array.from(Array(11).keys());
   }
 
   ngOnInit(): void {
@@ -87,18 +87,39 @@ export class BowlingFramesComponent implements OnInit {
     return this.activeFrame.frame.reduce((item, acc) => item + acc, 0);
   }
 
+  private fillLastFrame(pin: number): void {
+    switch (this.filledFrame) {
+      case 0:
+        this.activeFrame.frame[0] = pin;
+        break;
+      case 1:
+        this.activeFrame.frame[1] = pin;
+        break;
+      case 2:
+        this.activeFrame.frame[2] = pin;
+        this.sumOfFrames();
+        this.resetPins();
+        break;
+    }
+  }
+
   private addFrames(pin: number) {
     // make the frame sum
     this.frameIsFilled(pin);
 
-    if (this.filledFrame === 1) {
-      this.activeFrame.frame[1] = pin;
-      this.sumOfFrames();
-      this.resetPins();
-      this.currentFrame = this.currentFrame + 1;
+    if (this.activeFrame.id === 10) {
+      this.fillLastFrame(pin);
     } else {
-      this.activeFrame.frame[0] = pin;
+      if (this.filledFrame === 1) {
+        this.activeFrame.frame[1] = pin;
+        this.sumOfFrames();
+        this.resetPins();
+        this.currentFrame = this.currentFrame + 1;
+      } else {
+        this.activeFrame.frame[0] = pin;
+      }
     }
+
     console.log('frames', this.frames);
   }
 
@@ -126,11 +147,12 @@ export class BowlingFramesComponent implements OnInit {
 
   private addStrike(pin: number): void {
     console.log('add strike');
-    this.activeFrame.score = 10 + this.lastFrame.score;
-    // this.lastFrame.score = this.lastFrame.score + this.sumOneFrames();
+    // this.activeFrame.score = 10 + this.lastFrame.score;
+    this.activeFrame.score = this.lastFrame.score + this.sumOneFrames();
     this.activeFrame.strike = true;
     this.activeFrame.showScore = false;
-    this.activeFrame.frame[1].push(null);
+    this.activeFrame.frame[1] = null;
+    this.activeFrame.frame[1] = 10;
     // this.currentFrame = this.currentFrame + 1;
   }
 
