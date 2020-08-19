@@ -22,11 +22,11 @@ export class BowlingFramesComponent {
       Helpers
    */
 
-  get activeFrame(): any {
+  get activeFrame(): Bowling {
     return this.frames[this.currentFrame];
   }
 
-  get lastFrame(): any {
+  get lastFrame(): Bowling {
     return this.frames[this.currentFrame - 1];
   }
 
@@ -63,6 +63,14 @@ export class BowlingFramesComponent {
     return frame.id;
   }
 
+  selectFrame(index: number): void {
+    this.currentFrame = index;
+    this.activateFrame();
+    // if (this.frameSize > 0) {
+    //   this.resetFrame();
+    // }
+  }
+
   /*
       Fill all pins form 1 to 10
    */
@@ -77,14 +85,6 @@ export class BowlingFramesComponent {
   protected activateFrame(): void {
     this.deactivateFrame();
     this.activeFrame.active = true;
-  }
-
-  selectFrame(index: number): void {
-    this.currentFrame = index;
-    this.activateFrame();
-    // if (this.frameSize > 0) {
-    //   this.resetFrame();
-    // }
   }
 
   /*
@@ -105,6 +105,7 @@ export class BowlingFramesComponent {
   }
 
   private fillLastFrame(pin: number): void {
+    console.log('fillLastFrame');
     switch (this.filledFrame) {
       case 0:
         this.activeFrame.frame[0] = pin;
@@ -121,15 +122,26 @@ export class BowlingFramesComponent {
   }
 
   private calculateBonusScore(pin: number): void {
-    if (this.filledFrame === 1) {
-      this.activeFrame.frame[1] = pin;
-      if (!this.lastFrame?.strike) {
+    if (!this.activeFrame?.strike) {
+      if (this.filledFrame === 1) {
+        this.activeFrame.frame[1] = pin;
         this.sumOfFrames();
         this.currentFrame = this.currentFrame + 1;
+        this.resetPins();
+      } else {
+        console.log(2);
+        this.activeFrame.frame[0] = pin;
       }
-      this.resetPins();
     } else {
-      this.activeFrame.frame[0] = pin;
+      if (!this.lastFrame?.strike) {
+        this.currentFrame = this.currentFrame + 1;
+      }
+      // this.activateFrame();
+      // this.activeFrame.strike = false;
+
+      // this.lastFrame.score = this.lastFrame.score + this.sumOneFrames();
+      // this.lastFrame.strike = false;
+      console.log('activeFrame', this.activeFrame);
     }
   }
 
@@ -142,14 +154,6 @@ export class BowlingFramesComponent {
       this.fillLastFrame(pin);
     } else {
       this.calculateBonusScore(pin);
-    }
-
-    console.log('lastFrame', this.lastFrame);
-    console.log('activeFrame', this.activeFrame);
-    // strike calculation
-    if (this.filledFrame === 0 && this.lastFrame?.strike) {
-      this.lastFrame.score = this.lastFrame.score + this.sumOneFrames();
-      this.lastFrame.strike = false;
     }
 
     console.log('frames', this.frames);
@@ -165,20 +169,19 @@ export class BowlingFramesComponent {
   }
 
   private addSpare(pin: number): void {
-    console.log('addSpare', pin);
     this.activeFrame.score = 10 + this.lastFrame.score;
     this.activeFrame.spare = true;
     this.activeFrame.showScore = false;
   }
 
   private showSpare(pin: number): void {
+    console.log('showSpare');
     this.lastFrame.score = this.lastFrame.score + pin;
     this.lastFrame.showScore = true;
     this.lastFrame.spare = false;
   }
 
   private addStrike(pin: number): void {
-    console.log('add strike');
     this.activeFrame.strike = true;
     this.activeFrame.frame[1] = 10;
   }
@@ -194,7 +197,7 @@ export class BowlingFramesComponent {
     }
 
     // show spare
-    if (this.lastFrame?.spare) {
+    if (this.lastFrame?.spare && !this.lastFrame?.strike) {
       this.showSpare(pin);
     }
 
