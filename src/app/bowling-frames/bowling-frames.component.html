@@ -1,6 +1,7 @@
 <div class="pins">
-  <p class="pin" *ngFor="let pin of pins" (click)="displayPins(pin)">
+  <p class="pin" *ngFor="let pin of pins; let index= index" (click)="displayPins(pin)">
     <span>{{pin}}</span>
+<!--    <span>{{index}}</span>-->
   </p>
 </div>
 

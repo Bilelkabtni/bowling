@@ -61,16 +61,12 @@ export class BowlingFramesComponent {
   }
 
   selectFrame(index: number): void {
+    this.currentFrame = index;
     if (this.lastFilledFrame === 2) {
-      this.currentFrame = index;
       this.activateFrame();
     } else {
-      alert('please fill the previous frame')
+      this.currentFrame = index - 1;
     }
-
-    // if (this.frameSize > 0) {
-    //   this.resetFrame();
-    // }
   }
 
   incrementFrame() {
@@ -217,7 +213,7 @@ export class BowlingFramesComponent {
     }
   }
 
-  private addSpare(pin: number): void {
+  private addSpare(): void {
     console.log('addSpare');
     this.activeFrame.score = 10 + this.lastFrame.score;
     this.activeFrame.spare = true;
@@ -252,7 +248,7 @@ export class BowlingFramesComponent {
       const sum: number = this.sumOneFrames() + pin;
       if (sum === 10 && this.lastFrame) {
         console.log('show addSpare');
-        this.addSpare(pin);
+        this.addSpare();
       }
     }
   }
