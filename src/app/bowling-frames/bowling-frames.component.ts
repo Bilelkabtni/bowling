@@ -55,22 +55,6 @@ export class BowlingFramesComponent {
     }));
   }
 
-  protected incrementFrame() {
-    this.currentFrame = this.currentFrame + 1;
-  }
-
-  protected decrementFrame() {
-    this.currentFrame = this.currentFrame - 1;
-  }
-
-  protected setTotalScore(): void {
-    this.totalScore -= 20 - this.sumOneFrames();
-  }
-
-  protected addScore(): void {
-    this.activeFrame.score = this.lastFrame.score + this.sumOneFrames();
-  }
-
   /*
      Display Pins Value
    */
@@ -106,6 +90,22 @@ export class BowlingFramesComponent {
     }
   }
 
+  protected incrementFrame() {
+    this.currentFrame = this.currentFrame + 1;
+  }
+
+  protected decrementFrame() {
+    this.currentFrame = this.currentFrame - 1;
+  }
+
+  protected setTotalScore(): void {
+    this.totalScore -= 20 - this.sumOneFrames();
+  }
+
+  protected addScore(): void {
+    this.activeFrame.score = this.lastFrame.score + this.sumOneFrames();
+  }
+
   /*
       Fill all pins form 1 to 10
    */
@@ -124,32 +124,6 @@ export class BowlingFramesComponent {
 
   private sumOneFrames(): number {
     return this.activeFrame.frame.reduce((item, acc) => acc + item, 0);
-  }
-
-  private fillLastFrame(pin: number): void {
-    // console.log('fillLastFrame');
-    // switch (this.filledFrame) {
-    //   case 0:
-    //     this.activeFrame.frame[0] = pin;
-    //     this.addScore();
-    //     break;
-    //   case 1:
-    //     this.activeFrame.frame[1] = pin;
-    //     this.addScore();
-    //     break;
-    //   case 2:
-    //     const isSPare: boolean = (this.sumOneFrames() + pin) === 10;
-    //     if (isSPare || pin === 10) {
-    //       this.activeFrame.frame[2] = pin;
-    //       this.addScore();
-    //     } else {
-    //       this.currentFrame = 0;
-    //       this.activateFrame();
-    //     }
-    //     this.resetPins(); // reset when the last 2 throw are filled
-    //     break;
-    // }
-    this.activeFrame.frame[2] = pin;
   }
 
   private getStrike(pin: number): void {
@@ -176,25 +150,50 @@ export class BowlingFramesComponent {
       this.activeFrame.frame[0] = pin;
       this.activeFrame.frame[1] = null;
       this.totalScore += 20 - this.sumOneFrames();
+      console.log(1);
     } else {
       if (this.filledFrame === 1) {
+        console.log(22);
         this.activeFrame.frame[1] = pin;
         this.setTotalScore();
         this.sumOfFrames();
-        console.log('increment');
-        this.incrementFrame();
+        if (this.activeFrame.id !== 10) {
+          this.incrementFrame();
+        }
         this.resetPins();
       } else {
         // add pin to last element and show spare
         if (this.lastFrame?.spare) {
+          console.log(333);
           this.activeFrame.frame[0] = pin;
           this.showSpare(pin);
           this.totalScore -= 10 - this.sumOneFrames();
         } else {
+          console.log(444);
           this.activeFrame.frame[0] = pin;
           this.totalScore -= 10;
         }
       }
+    }
+  }
+
+  private addBonus(pin: number): void {
+    if (this.activeFrame?.id === 10 && this.filledFrame === 2) {
+      const isSPare: boolean = this.sumOneFrames() === 10;
+      console.log('isSPare', isSPare);
+      console.log('isSPare', pin);
+      if (isSPare || pin === 10) {
+        console.log(111, this.activeFrame.frame);
+        this.activeFrame.frame[2] = pin;
+        this.addScore();
+        this.totalScore = this.activeFrame.score;
+        this.activeFrame.showScore = true;
+      } else {
+        console.log(333);
+        this.currentFrame = 0;
+        this.activateFrame();
+      }
+      console.log('pin', pin);
     }
   }
 
@@ -204,20 +203,13 @@ export class BowlingFramesComponent {
     } else {
       this.getStrike(pin);
     }
+    this.addBonus(pin);
   }
 
   private addFrames(pin: number) {
     // make the frame sum
     this.frameIsFilled(pin);
     this.calculateBonusScore(pin);
-    // last frame check
-    // if (this.activeFrame.id === 10) {
-    //   this.fillLastFrame(pin);
-    //   // this.calculateBonusScore(pin);
-    // } else {
-    //   this.calculateBonusScore(pin);
-    // }
-
     console.log('frames', this.frames);
   }
 
