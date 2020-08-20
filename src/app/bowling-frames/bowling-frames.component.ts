@@ -71,6 +71,14 @@ export class BowlingFramesComponent {
     // }
   }
 
+  incrementFrame() {
+    this.currentFrame = this.currentFrame + 1;
+  }
+
+  decrementFrame() {
+    this.currentFrame = this.currentFrame - 1;
+  }
+
   /*
       Fill all pins form 1 to 10
    */
@@ -101,7 +109,7 @@ export class BowlingFramesComponent {
   }
 
   private sumOneFrames(): number {
-    return this.activeFrame.frame.reduce((item, acc) => item + acc, 0);
+    return this.activeFrame.frame[0] + this.activeFrame.frame[1];
   }
 
   private fillLastFrame(pin: number): void {
@@ -121,52 +129,46 @@ export class BowlingFramesComponent {
     }
   }
 
-  private calculateBonusScore(pin: number): void {
-    if (!this.activeFrame?.strike && !this.lastFrame?.strike) {
-      if (this.filledFrame === 1) {
-        this.activeFrame.frame[1] = pin;
-        this.sumOfFrames();
-        this.incrementFrame();
-        this.resetPins();
-      } else {
-        this.activeFrame.frame[0] = pin;
-      }
+  private getStrike(pin: number): void {
+    if (this.filledFrame === 0) {
+      this.activeFrame.frame[0] = pin;
     } else {
+      console.log('getStrike aaa');
+      this.activeFrame.frame[1] = pin;
+      this.lastFrame.showScore = false;
 
-      if (this.filledFrame === 0) {
-        this.activeFrame.frame[0] = pin;
-        // this.lastFrame.strike = false;
-        // this.sumOfFrames();
-        // this.activeFrame.strike = false;
-      } else {
-        this.activeFrame.frame[1] = pin;
-        // this.decrementFrame()
-        // this.lastFrame.score = this.lastFrame.score + this.sumOneFrames();
-        this.activeFrame.score = this.lastFrame.score + this.sumOneFrames();
-        // console.log('this.activeFrame.score', this.activeFrame.score)
-        console.log('this.activeFrame.id', this.activeFrame.id)
-        console.log('this.lastFrame.id', this.lastFrame.id)
-        // this.activeFrame.score +=  this.activeFrame.frame[0] +  this.activeFrame.frame[1];
-      }
-
-      if (!this.lastFrame?.strike) {
-        this.incrementFrame();
-      }
-
-      // console.log('activeFrame', this.activeFrame)
-      // console.log('filledFrame', this.filledFrame)
-
-      // this.lastFrame.strike = false;
-      // console.log('activeFrame', this.activeFrame);
+      this.lastFrame.score = this.lastFrame.score + this.sumOneFrames();
+      this.activeFrame.score = this.lastFrame.score + this.sumOneFrames();
+      this.lastFrame.showScore = true;
+      this.resetPins();
+      this.incrementFrame();
     }
   }
 
-  incrementFrame() {
-    this.currentFrame = this.currentFrame + 1;
+  private addPinToFrame(pin: number): void {
+    if (this.filledFrame === 1) {
+      this.activeFrame.frame[1] = pin;
+      this.sumOfFrames();
+      console.log('increment');
+      this.incrementFrame();
+      this.resetPins();
+    } else {
+      // add pin to last element and show spare
+      if (this.lastFrame?.spare) {
+        this.activeFrame.frame[0] = pin;
+        this.showSpare(pin);
+      } else {
+        this.activeFrame.frame[0] = pin;
+      }
+    }
   }
 
-  decrementFrame() {
-    this.currentFrame = this.currentFrame - 1;
+  private calculateBonusScore(pin: number): void {
+    if (!this.lastFrame?.strike) {
+      this.addPinToFrame(pin);
+    } else {
+      this.getStrike(pin);
+    }
   }
 
   private addFrames(pin: number) {
@@ -193,6 +195,7 @@ export class BowlingFramesComponent {
   }
 
   private addSpare(pin: number): void {
+    console.log('addSpare');
     this.activeFrame.score = 10 + this.lastFrame.score;
     this.activeFrame.spare = true;
     this.activeFrame.showScore = false;
@@ -206,28 +209,27 @@ export class BowlingFramesComponent {
   }
 
   private addStrike(pin: number): void {
+    // console.log('addStrike');
     this.activeFrame.strike = true;
     this.activeFrame.frame[1] = 10;
+    this.activeFrame.showScore = false;
+    // this.incrementFrame();
   }
 
   private frameIsFilled(pin: number): void {
     // activate frame
     this.activateFrame();
 
-    // show spare when sum is 10
-    const sum: number = this.sumOneFrames() + pin;
-    if (sum === 10 && this.lastFrame) {
-      this.addSpare(pin);
-    }
-
-    // show spare
-    if (this.lastFrame?.spare && !this.lastFrame?.strike) {
-      this.showSpare(pin);
-    }
-
     // show strike
-    if (pin === 10 && this.lastFrame) {
+    if (pin === 10) {
       this.addStrike(pin);
+    } else {
+      // show spare when sum is 10
+      const sum: number = this.sumOneFrames() + pin;
+      if (sum === 10 && this.lastFrame) {
+        console.log('show addSpare');
+        this.addSpare(pin);
+      }
     }
   }
 
