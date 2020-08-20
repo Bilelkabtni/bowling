@@ -18,5 +18,6 @@
 <!--    <span *ngIf="sumOfFrame > 0">{{sumOfFrame}}</span>-->
     <span *ngIf="frame?.score !== 0 && frame?.showScore">{{frame?.score}}</span>
   </div>
-<!--  <h2>{{hdcpScore}}</h2>-->
+  <p class="mgl" *ngIf="totalScore">totalScore: {{totalScore}}</p>
 </div>
+
