@@ -123,8 +123,7 @@ export class BowlingFramesComponent {
         break;
       case 2:
         this.activeFrame.frame[2] = pin;
-        this.sumOfFrames();
-        this.resetPins();
+        this.resetPins(); // reset when the last 2 throw are filled
         break;
     }
   }
@@ -146,21 +145,23 @@ export class BowlingFramesComponent {
   }
 
   private addPinToFrame(pin: number): void {
-    if (this.filledFrame === 1) {
-      this.activeFrame.frame[1] = pin;
-      this.sumOfFrames();
-      console.log('increment');
-      this.incrementFrame();
-      this.resetPins();
-    } else {
-      // add pin to last element and show spare
-      if (this.lastFrame?.spare) {
-        this.activeFrame.frame[0] = pin;
-        this.showSpare(pin);
+    // if (this.activeFrame.id !== 10) {
+      if (this.filledFrame === 1) {
+        this.activeFrame.frame[1] = pin;
+        this.sumOfFrames();
+        console.log('increment');
+        this.incrementFrame();
+        this.resetPins();
       } else {
-        this.activeFrame.frame[0] = pin;
+        // add pin to last element and show spare
+        if (this.lastFrame?.spare) {
+          this.activeFrame.frame[0] = pin;
+          this.showSpare(pin);
+        } else {
+          this.activeFrame.frame[0] = pin;
+        }
       }
-    }
+    // }
   }
 
   private calculateBonusScore(pin: number): void {
