@@ -62,10 +62,11 @@ export class BowlingFramesComponent {
 
   selectFrame(index: number): void {
     this.currentFrame = index;
-    if (this.lastFilledFrame === 2) {
+    if (this.lastFilledFrame === 2 && index !== 0) {
       this.activateFrame();
     } else {
       this.currentFrame = index - 1;
+      alert('please fill the last frame');
     }
   }
 
