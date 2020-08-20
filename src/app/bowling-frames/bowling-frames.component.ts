@@ -43,10 +43,6 @@ export class BowlingFramesComponent {
     return this.lastFrame?.frame?.filter(item => item !== null).length;
   }
 
-  get nextFilledFrame(): number {
-    return this.frames[this.currentFrame + 1]?.frame?.filter(item => item !== null).length;
-  }
-
   /*
      Display Pins Value
    */
@@ -60,13 +56,18 @@ export class BowlingFramesComponent {
     this.addFrames(pin);
   }
 
-  trackById(frame: any): number {
+  trackById(frame: Bowling): number {
     return frame.id;
   }
 
   selectFrame(index: number): void {
-    this.currentFrame = index;
-    this.activateFrame();
+    if (this.lastFilledFrame === 2) {
+      this.currentFrame = index;
+      this.activateFrame();
+    } else {
+      alert('please fill the previous frame')
+    }
+
     // if (this.frameSize > 0) {
     //   this.resetFrame();
     // }
@@ -181,12 +182,17 @@ export class BowlingFramesComponent {
   }
 
   private calculateBonusScore(pin: number): void {
-    if (!this.lastFrame?.strike) {
-      this.addPinToFrame(pin);
-    } else {
-      this.getStrike(pin);
+    // if (this.lastFilledFrame === 2 && this.currentFrame >= 0) {
+      if (!this.lastFrame?.strike) {
+        this.addPinToFrame(pin);
+      } else {
+        this.getStrike(pin);
+      }
     }
-  }
+    // else {
+    //   alert('please fill previous frame')
+    // }
+  // }
 
   private addFrames(pin: number) {
     // make the frame sum
