@@ -13,7 +13,6 @@ export class BowlingFramesComponent {
   frames: Bowling[] = bowling;
 
   currentFrame = 0;
-  hdcpScore = 0;
   totalScore = 300;
 
   constructor() {
@@ -62,11 +61,19 @@ export class BowlingFramesComponent {
 
   selectFrame(index: number): void {
     this.currentFrame = index;
+    // block the move in case that the last frame is empty
     if (this.lastFilledFrame === 2 && index !== 0) {
       this.activateFrame();
     } else {
-      this.currentFrame = index - 1;
-      alert('please fill the last frame');
+      // in case the user click to the first case
+      if (this.currentFrame !== 0) {
+        alert('please fill the last frame');
+        this.currentFrame = index - 1;
+        this.activateFrame();
+      } else {
+        this.currentFrame = 0;
+        this.activateFrame();
+      }
     }
   }
 
@@ -98,21 +105,8 @@ export class BowlingFramesComponent {
     this.activeFrame.active = true;
   }
 
-  /*
-      Reset Frame
-   */
-  protected resetFrame(): void {
-    this.activeFrame.frame = [null, null];
-    this.activeFrame.score = 0;
-    this.activeFrame.active = false;
-    this.activeFrame.showScore = true;
-    this.activeFrame.strike = false;
-    this.activeFrame.spare = false;
-    this.resetPins();
-  }
-
   private sumOneFrames(): number {
-    return this.activeFrame.frame[0] + this.activeFrame.frame[1];
+    return this.activeFrame.frame.reduce((item, acc) => acc + item, 0);
   }
 
   private fillLastFrame(pin: number): void {
@@ -125,7 +119,16 @@ export class BowlingFramesComponent {
         this.activeFrame.frame[1] = pin;
         break;
       case 2:
-        this.activeFrame.frame[2] = pin;
+        const isSPare: boolean = (this.sumOneFrames() + pin) === 10;
+        if (isSPare || pin === 10) {
+          this.activeFrame.frame[2] = pin;
+        } else {
+          this.currentFrame = 0;
+          this.activateFrame();
+          // this.calculateBonusScore(pin);
+          // this.frames.map(item => item.frame.map(f => this.addFrames(f)));
+          // this.addFrames(pin);
+        }
         this.resetPins(); // reset when the last 2 throw are filled
         break;
     }
@@ -143,7 +146,7 @@ export class BowlingFramesComponent {
 
       this.lastFrame.score = this.lastFrame.score + this.sumOneFrames();
       this.activeFrame.score = this.lastFrame.score + this.sumOneFrames();
-      this.totalScore +=  this.sumOneFrames();
+      this.totalScore += this.sumOneFrames();
       this.lastFrame.showScore = true;
       this.resetPins();
       this.incrementFrame();
@@ -179,17 +182,12 @@ export class BowlingFramesComponent {
   }
 
   private calculateBonusScore(pin: number): void {
-    // if (this.lastFilledFrame === 2 && this.currentFrame >= 0) {
-      if (!this.lastFrame?.strike) {
-        this.addPinToFrame(pin);
-      } else {
-        this.getStrike(pin);
-      }
+    if (!this.lastFrame?.strike) {
+      this.addPinToFrame(pin);
+    } else {
+      this.getStrike(pin);
     }
-    // else {
-    //   alert('please fill previous frame')
-    // }
-  // }
+  }
 
   private addFrames(pin: number) {
     // make the frame sum
@@ -214,6 +212,10 @@ export class BowlingFramesComponent {
     }
   }
 
+  get hdcp(): number {
+    return this.lastFrame?.score;
+  }
+
   private addSpare(): void {
     console.log('addSpare');
     this.activeFrame.score = 10 + this.lastFrame.score;
@@ -229,12 +231,10 @@ export class BowlingFramesComponent {
   }
 
   private addStrike(pin: number): void {
-    // console.log('addStrike');
     this.activeFrame.strike = true;
     this.activeFrame.frame[1] = 10;
     this.setTotalScore();
     this.activeFrame.showScore = false;
-    // this.incrementFrame();
   }
 
   private frameIsFilled(pin: number): void {
@@ -254,6 +254,7 @@ export class BowlingFramesComponent {
     }
   }
 
+  // reset pin after selecting tow frame
   private resetPins(): void {
     this.pins = this.fillPins();
   }

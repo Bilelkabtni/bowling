@@ -1,24 +1,29 @@
-<div class="pins">
-  <p class="pin" *ngFor="let pin of pins; let index= index" (click)="displayPins(pin)">
-    <span>{{pin}}</span>
-<!--    <span>{{index}}</span>-->
-  </p>
-</div>
-
-
-<div class="container">
-  <div class="pins mgl"
-       (click)="selectFrame(index)"
-       [ngClass]="{'active': frame.active }"
-       *ngFor="let frame of frames; let index= index">
-    <div class="pins" *ngFor="let item of frame.frame; let index= index; trackBy:trackById">
-      <p class="pin">
-        <span>{{item === 10 ? 'x' : item}}</span>
-      </p>
-    </div>
-<!--    <span *ngIf="sumOfFrame > 0">{{sumOfFrame}}</span>-->
-    <span *ngIf="frame?.score !== 0 && frame?.showScore">{{frame?.score}}</span>
+<div class="flex">
+  <div class="pins">
+    <button class="pin mgr" *ngFor="let pin of pins; let index= index" (click)="displayPins(pin)">
+      <span>{{pin}}</span>
+    </button>
   </div>
-  <p class="mgl" *ngIf="totalScore">totalScore: {{totalScore}}</p>
 </div>
+
+<div class="grid">
+  <div class="container" *ngFor="let frame of frames; let index= index">
+    <h2 class="text-center">{{index + 1}}</h2>
+    <div class="pins js-center"
+         (click)="selectFrame(index)"
+         [ngClass]="{'active': frame.active }"
+    >
+      <div class="pins" *ngFor="let item of frame.frame; let index= index; trackBy:trackById">
+        <p class="odd">
+          <span>{{item === 10 ? 'x' : item}}</span>
+        </p>
+      </div>
+    </div>
+    <h3 class="no text-center" *ngIf="frame?.score !== 0 && frame?.showScore">{{frame?.score}}</h3>
+  </div>
+</div>
+
+<h1 class="mgl" *ngIf="totalScore">MAX Possible: {{totalScore}}</h1>
+<h1 class="mgl">HDCP Score: {{hdcp}}</h1>
+
 

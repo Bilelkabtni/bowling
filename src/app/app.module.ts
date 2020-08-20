@@ -3,11 +3,13 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { BowlingFramesComponent } from './bowling-frames/bowling-frames.component';
+import { HeaderComponent } from './header/header.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    BowlingFramesComponent
+    BowlingFramesComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule
