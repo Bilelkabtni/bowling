@@ -66,7 +66,7 @@ export class BowlingFramesComponent {
       }
     }
     // add bonus
-    if (this.activeFrame?.id === 10 && this.filledFrame !== 2) {
+    if (this.activeFrame?.id === 10) {
       this.addBonus(pin);
     }
     // add frame independently from bonus logic
