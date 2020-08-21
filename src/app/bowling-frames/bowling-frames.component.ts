@@ -169,20 +169,20 @@ export class BowlingFramesComponent {
   }
 
   private getStrike(pin: number): void {
-    // if (this.filledFrame === 0) {
-    //   this.activeFrame.frame[0] = pin;
-    //   this.totalScore -= 10;
-    // } else {
-    //   this.activeFrame.frame[1] = pin;
-    //   this.setTotalScore();
-    //   this.lastFrame.showScore = false;
-    //   this.lastFrame.score = this.lastFrame.score + this.sumOneFrames();
-    //   this.addScore();
-    //   this.totalScore += this.sumOneFrames();
-    //   this.lastFrame.showScore = true;
-    //   this.resetPins();
-    //   this.incrementFrame();
-    // }
+    if (this.filledFrame === 0) {
+      this.activeFrame.frame[0] = pin;
+      this.totalScore -= 10;
+    } else {
+      this.activeFrame.frame[1] = pin;
+      this.setTotalScore();
+      this.lastFrame.showScore = false;
+      this.lastFrame.score = this.lastFrame.score + this.sumOneFrames();
+      this.addScore();
+      this.totalScore += this.sumOneFrames();
+      this.lastFrame.showScore = true;
+      this.resetPins();
+      this.incrementFrame();
+    }
   }
 
   private addPinToFrame(pin: number): void {
