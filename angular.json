@@ -28,7 +28,6 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles/reset.scss",
               "src/styles.scss"
             ],
             "scripts": []
