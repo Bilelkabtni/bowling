@@ -153,14 +153,12 @@ export class BowlingFramesComponent {
       const isSpare = (item.frame[0] + item.frame[1]) === 10;
 
       if (item.id >= this.activeFrame.id && this.lastFrame) {
-        if (!item.strike) {
-          item.score = this.frames[i - 1].score + item.frame[0] + item.frame[1];
-        } else if (isSpare) {
-          console.log('this.frames[i + 1]', this.frames[i + 1])
-          console.log('this.frames[i - 1]', this.frames[i - 1])
-          item.score = 10 + this.frames[i - 1].score + this.frames[i + 1].frame[0] + this.frames[i + 1].frame[1];
-        } else {
+        if (item.strike) {
           item.score = this.frames[i - 1].score + 10 + this.frames[i + 1].frame[0] + this.frames[i + 1].frame[1];
+        } else if (isSpare) {
+          item.score = 10 + this.frames[i - 1].score + this.frames[i + 1].frame[0];
+        } else {
+          item.score = this.frames[i - 1].score + item.frame[0] + item.frame[1];
         }
         // this.totalScore += this.sumOneFrames();
       }
