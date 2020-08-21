@@ -1,5 +1,4 @@
 import {Component} from '@angular/core';
-import {bowling} from 'src/app/bowling-frames/bowling.data';
 import {Bowling} from 'src/app/bowling-frames/bowling.interface';
 
 @Component({
@@ -10,22 +9,38 @@ import {Bowling} from 'src/app/bowling-frames/bowling.interface';
 export class BowlingFramesComponent {
   pins = this.fillPins();
 
-  frames: Bowling[] = bowling;
+  frames: Bowling[] = [];
 
   currentFrame = 0;
   totalScore = 300;
 
   constructor() {
+    // init frame
+    for (let i = 1; i <= 10; i++) {
+      i !== 10 ? this.initFrame(i, [null, null]) : this.initFrame(i, [null, null, null]);
+    }
   }
 
-  /* *
-      Helpers
-   */
+  private initFrame(id: number, frame: number[]): void {
+    this.frames.push({
+      id,
+      frame,
+      score: 0,
+      active: false,
+      showScore: true,
+      spare: false,
+      strike: false
+    });
+  }
 
   // the hdcp is the maximum score
   get hdcp(): number {
     return Math.max(...this.frames.map(o => o.score), 0);
   }
+
+  /* *
+      Helpers
+   */
 
   protected get activeFrame(): Bowling {
     return this.frames[this.currentFrame];
@@ -46,6 +61,7 @@ export class BowlingFramesComponent {
   protected get lastFilledFrame(): number {
     return this.lastFrame?.frame?.filter(item => item !== null).length;
   }
+
   // todo reactor this to one func or create a prototype
   protected get latestFiledFrame(): number {
     let index = 0;
@@ -79,7 +95,7 @@ export class BowlingFramesComponent {
     }
 
     if (this.activeFrame?.strike) {
-      console.log('already strike')
+      console.log('already strike');
       this.activeFrame.strike = false;
       this.activeFrame.showScore = true;
       this.activeFrame.frame[0] = null;
