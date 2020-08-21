@@ -78,6 +78,14 @@ export class BowlingFramesComponent {
       }
     }
 
+    if (this.activeFrame?.strike) {
+      console.log('already strike')
+      this.activeFrame.strike = false;
+      this.activeFrame.showScore = true;
+      this.activeFrame.frame[0] = null;
+      this.activeFrame.frame[1] = null;
+    }
+
     // decrement while ids are from 1 to 10
     if (this.currentFrame === 10) {
       this.decrementFrame();
