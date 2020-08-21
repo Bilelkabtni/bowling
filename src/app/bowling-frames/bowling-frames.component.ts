@@ -46,7 +46,7 @@ export class BowlingFramesComponent {
   protected get lastFilledFrame(): number {
     return this.lastFrame?.frame?.filter(item => item !== null).length;
   }
-
+  // todo reactor this to one func or create a prototype
   protected get latestFiledFrame(): number {
     let index = 0;
     for (let i = 0; i <= this.frames.length; i++) {
@@ -116,11 +116,11 @@ export class BowlingFramesComponent {
   }
 
   protected incrementFrame() {
-    this.currentFrame = this.currentFrame + 1;
+    this.currentFrame += 1;
   }
 
   protected decrementFrame() {
-    this.currentFrame = this.currentFrame - 1;
+    this.currentFrame -= 1;
   }
 
   protected setTotalScore(): void {
@@ -160,7 +160,6 @@ export class BowlingFramesComponent {
         } else {
           item.score = this.frames[i - 1].score + item.frame[0] + item.frame[1];
         }
-        // this.totalScore += this.sumOneFrames();
       }
     }
   }
@@ -170,20 +169,20 @@ export class BowlingFramesComponent {
   }
 
   private getStrike(pin: number): void {
-    if (this.filledFrame === 0) {
-      this.activeFrame.frame[0] = pin;
-      this.totalScore -= 10;
-    } else {
-      this.activeFrame.frame[1] = pin;
-      this.setTotalScore();
-      this.lastFrame.showScore = false;
-      this.lastFrame.score = this.lastFrame.score + this.sumOneFrames();
-      this.addScore();
-      this.totalScore += this.sumOneFrames();
-      this.lastFrame.showScore = true;
-      this.resetPins();
-      this.incrementFrame();
-    }
+    // if (this.filledFrame === 0) {
+    //   this.activeFrame.frame[0] = pin;
+    //   this.totalScore -= 10;
+    // } else {
+    //   this.activeFrame.frame[1] = pin;
+    //   this.setTotalScore();
+    //   this.lastFrame.showScore = false;
+    //   this.lastFrame.score = this.lastFrame.score + this.sumOneFrames();
+    //   this.addScore();
+    //   this.totalScore += this.sumOneFrames();
+    //   this.lastFrame.showScore = true;
+    //   this.resetPins();
+    //   this.incrementFrame();
+    // }
   }
 
   private addPinToFrame(pin: number): void {
