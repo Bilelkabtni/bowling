@@ -22,32 +22,32 @@ export class BowlingFramesComponent {
       Helpers
    */
 
-  get activeFrame(): Bowling {
-    return this.frames[this.currentFrame];
-  }
-
-  get lastFrame(): Bowling {
-    return this.frames[this.currentFrame - 1];
-  }
-
-  get frameSize(): number {
-    return this.activeFrame?.frame?.length || 0;
-  }
-
-  get filledFrame(): number {
-    return this.activeFrame?.frame?.filter(item => item !== null).length;
-  }
-
-  get lastFilledFrame(): number {
-    return this.lastFrame?.frame?.filter(item => item !== null).length;
-  }
-
   // the hdcp is the maximum score
   get hdcp(): number {
     return Math.max(...this.frames.map(o => o.score), 0);
   }
 
-  get latestFiledFrame(): number {
+  protected get activeFrame(): Bowling {
+    return this.frames[this.currentFrame];
+  }
+
+  protected get lastFrame(): Bowling {
+    return this.frames[this.currentFrame - 1];
+  }
+
+  protected get frameSize(): number {
+    return this.activeFrame?.frame?.length || 0;
+  }
+
+  protected get filledFrame(): number {
+    return this.activeFrame?.frame?.filter(item => item !== null).length;
+  }
+
+  protected get lastFilledFrame(): number {
+    return this.lastFrame?.frame?.filter(item => item !== null).length;
+  }
+
+  protected get latestFiledFrame(): number {
     let index = 0;
     for (let i = 0; i <= this.frames.length; i++) {
       if (this.frames[i]?.frame.filter(item => item !== null).length === 2) {
@@ -57,7 +57,7 @@ export class BowlingFramesComponent {
     return index;
   }
 
-  get latestUnFiledFrame(): number {
+  protected get latestUnFiledFrame(): number {
     let index = 0;
     for (let i = 0; i <= this.frames.length; i++) {
       if (this.frames[i]?.frame.filter(item => item === null).length === 0) {
@@ -65,17 +65,6 @@ export class BowlingFramesComponent {
       }
     }
     return index + 1;
-  }
-
-
-  calculateAllScore(): void {
-    for (let i = 0; i <= this.latestFiledFrame; i++) {
-      const item = this.frames[i];
-      if (item.id >= this.activeFrame.id && this.lastFrame) {
-        item.score = this.lastFrame.score + this.sumOneFrames();
-        // this.totalScore += this.sumOneFrames();
-      }
-    }
   }
 
   /*
@@ -156,6 +145,26 @@ export class BowlingFramesComponent {
   protected activateFrame(): void {
     this.deactivateFrame();
     this.activeFrame.active = true;
+  }
+
+  private calculateAllScore(): void {
+    for (let i = 1; i <= this.latestFiledFrame; i++) {
+      const item = this.frames[i];
+      const isSpare = (item.frame[0] + item.frame[1]) === 10;
+
+      if (item.id >= this.activeFrame.id && this.lastFrame) {
+        if (!item.strike) {
+          item.score = this.frames[i - 1].score + item.frame[0] + item.frame[1];
+        } else if (isSpare) {
+          console.log('this.frames[i + 1]', this.frames[i + 1])
+          console.log('this.frames[i - 1]', this.frames[i - 1])
+          item.score = 10 + this.frames[i - 1].score + this.frames[i + 1].frame[0] + this.frames[i + 1].frame[1];
+        } else {
+          item.score = this.frames[i - 1].score + 10 + this.frames[i + 1].frame[0] + this.frames[i + 1].frame[1];
+        }
+        // this.totalScore += this.sumOneFrames();
+      }
+    }
   }
 
   private sumOneFrames(): number {
@@ -292,7 +301,4 @@ export class BowlingFramesComponent {
   private resetPins(): void {
     this.pins = this.fillPins();
   }
-
 }
-
-Array.prototype
