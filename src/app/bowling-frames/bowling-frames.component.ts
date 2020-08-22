@@ -69,7 +69,8 @@ export class BowlingFramesComponent {
   protected get latestUnFiledFrame(): number {
     let index = 0;
     for (let i = 0; i <= this.frames.length; i++) {
-      if (this.frames[i]?.frame.filter(item => item === null).length === 0) {
+      const filled: number = this.frames[i]?.frame.filter(item => item === null).length;
+      if (filled === 0) {
         index = i;
       }
     }
@@ -110,6 +111,8 @@ export class BowlingFramesComponent {
     }
 
     this.calculateAllScore();
+    // show all score
+    // this.showScore();
   }
 
   trackById(frame: Bowling): number {
@@ -166,6 +169,12 @@ export class BowlingFramesComponent {
     this.activeFrame.active = true;
   }
 
+  private showScore(): void{
+    this.frames.forEach(item => {
+      item.showScore = item.spare || item.strike || item.showScore;
+    });
+  }
+
   private initFrame(id: number, frame: number[]): void {
     this.frames.push({
       id,
@@ -182,14 +191,11 @@ export class BowlingFramesComponent {
     for (let i = 0; i <= this.latestFiledFrame; i++) {
       const item = this.frames[i];
       const isSpare = (item.frame[0] + item.frame[1]) === 10;
-      console.log('activeFrame', i)
+      // console.log('activeFrame', i)
       if (item.id >= this.activeFrame.id && this.lastFrame) {
-        // console.log('activeFrame', i)
         if (item.strike) {
           item.score = this.frames[i - 1].score + 10 + this.frames[i + 1].frame[0] + this.frames[i + 1].frame[1];
         } else if (isSpare) {
-          // console.log('this.frames[i - 1]', this.frames[i - 1])
-          // console.log('this.frames[i - 1]', this.frames[i + 1])
           item.score = 10 + this.frames[i - 1]?.score + this.frames[i]?.frame[0];
         } else {
           item.score = this.frames[i - 1].score + item.frame[0] + item.frame[1];
@@ -208,6 +214,7 @@ export class BowlingFramesComponent {
       console.log('11');
       this.activeFrame.frame[0] = pin;
       this.activeFrame.score += pin;
+      this.lastFrame.showScore = true;
       this.totalScore -= 10;
     } else {
       console.log('22');
@@ -224,7 +231,7 @@ export class BowlingFramesComponent {
     if (!this.activeFrame?.strike && this.filledFrame !== 0) {
       this.activeFrame.showScore = true;
       this.frames.filter(item => item.strike).forEach((frame, key) => {
-        // this.activeFrame.score += 1;
+        this.activeFrame.score += pin;
         frame.showScore = true;
       });
     }
