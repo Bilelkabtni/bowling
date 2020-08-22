@@ -102,6 +102,7 @@ export class BowlingFramesComponent {
     if (this.filledFrame !== 3) {
       this.addFrames(pin);
     }
+
     this.calculateAllScore();
   }
 
@@ -208,12 +209,12 @@ export class BowlingFramesComponent {
         this.incrementFrame();
       }
     }
-    // if (!this.activeFrame?.strike && this.filledFrame !== 0) {
-    //   this.activeFrame.showScore = true;
-    //   this.frames.filter(item => item.strike).forEach((frame, key) => {
-    //     frame.showScore = true;
-    //   });
-    // }
+    if (!this.activeFrame?.strike && this.filledFrame !== 0) {
+      this.activeFrame.showScore = true;
+      this.frames.filter(item => item.strike).forEach((frame, key) => {
+        frame.showScore = true;
+      });
+    }
   }
 
   private addPinToFrame(pin: number): void {
@@ -254,7 +255,7 @@ export class BowlingFramesComponent {
     if (this.activeFrame?.id === 10 && this.filledFrame === 2) {
       const isSPare: boolean = this.sumOneFrames() === 10;
       // add bonus in case of strike or spare
-      if (isSPare || pin === 10) {
+      if (this.activeFrame?.strike || this.activeFrame?.spare) {
         this.activeFrame.frame[2] = pin;
         this.addScore();
         this.totalScore = this.activeFrame.score;
