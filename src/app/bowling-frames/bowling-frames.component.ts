@@ -10,7 +10,6 @@ export class BowlingFramesComponent {
   pins = this.fillPins();
 
   frames: Bowling[] = [];
-
   currentFrame = 0;
   totalScore = 300;
 
@@ -21,30 +20,18 @@ export class BowlingFramesComponent {
     }
   }
 
-  private initFrame(id: number, frame: number[]): void {
-    this.frames.push({
-      id,
-      frame,
-      score: 0,
-      active: false,
-      showScore: true,
-      spare: false,
-      strike: false
-    });
-  }
-
   // the hdcp is the maximum score
   get hdcp(): number {
     return Math.max(...this.frames.map(o => o.score), 0);
   }
 
-  /* *
-      Helpers
-   */
-
   protected get activeFrame(): Bowling {
     return this.frames[this.currentFrame];
   }
+
+  /* *
+      Helpers
+   */
 
   protected get lastFrame(): Bowling {
     return this.frames[this.currentFrame - 1];
@@ -123,11 +110,11 @@ export class BowlingFramesComponent {
 
   selectFrame(index: number): void {
     this.currentFrame = index;
-    // block the move in case that the last frame is empty
-    if (this.lastFilledFrame === 2 && index !== 0) {
+    // block the move when the last frame is empty
+    if (this.lastFilledFrame === 2 && index !== 0 || this.lastFrame?.strike) {
       this.activateFrame();
     } else {
-      // in case the user click to the first case
+      // Case: user click on the first frame
       if (this.currentFrame !== 0) {
         alert('please fill the last frame');
         this.currentFrame = this.latestUnFiledFrame;
@@ -171,6 +158,18 @@ export class BowlingFramesComponent {
     this.activeFrame.active = true;
   }
 
+  private initFrame(id: number, frame: number[]): void {
+    this.frames.push({
+      id,
+      frame,
+      score: 0,
+      active: false,
+      showScore: true,
+      spare: false,
+      strike: false
+    });
+  }
+
   private calculateAllScore(): void {
     for (let i = 1; i <= this.latestFiledFrame; i++) {
       const item = this.frames[i];
@@ -199,31 +198,39 @@ export class BowlingFramesComponent {
     } else {
       this.activeFrame.frame[1] = pin;
       this.setTotalScore();
-      this.lastFrame.showScore = false;
       this.lastFrame.score = this.lastFrame.score + this.sumOneFrames();
       this.addScore();
       this.totalScore += this.sumOneFrames();
-      this.lastFrame.showScore = true;
       this.resetPins();
       this.incrementFrame();
+    }
+    if (!this.activeFrame?.strike && this.filledFrame !== 0) {
+      this.activeFrame.showScore = true;
+      this.frames.filter(item => item.strike).forEach((frame, key) => {
+        frame.showScore = true;
+      });
     }
   }
 
   private addPinToFrame(pin: number): void {
+    // first case is when the frames are filled
     if (this.filledFrame === 2 && this.activeFrame.id !== 10) {
       this.activeFrame.frame[0] = pin;
       this.activeFrame.frame[1] = null;
       this.totalScore += 20 - this.sumOneFrames();
     } else {
+      // case one frame is filled
       if (this.filledFrame === 1) {
         if (this.activeFrame.frame[1] === null) {
           this.activeFrame.frame[1] = pin;
         }
         this.setTotalScore();
         this.sumOfFrames();
+        // case this case handled by the addBonus
         if (this.activeFrame.id !== 10) {
           this.incrementFrame();
         }
+        // reset Pin
         this.resetPins();
       } else {
         // add pin to last element and show spare
@@ -242,6 +249,7 @@ export class BowlingFramesComponent {
   private addBonus(pin: number): void {
     if (this.activeFrame?.id === 10 && this.filledFrame === 2) {
       const isSPare: boolean = this.sumOneFrames() === 10;
+      // add bonus in case of strike or spare
       if (isSPare || pin === 10) {
         this.activeFrame.frame[2] = pin;
         this.addScore();
@@ -249,10 +257,12 @@ export class BowlingFramesComponent {
         this.activeFrame.showScore = true;
         this.lastFrame.showScore = true;
       } else {
+        // move to next frame
         this.currentFrame = 0;
         this.activateFrame();
       }
     }
+    // reset pin
     this.resetPins();
   }
 
