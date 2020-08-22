@@ -16,6 +16,7 @@ export class BowlingFramesComponent {
   constructor() {
     // init frame
     for (let i = 1; i <= 10; i++) {
+      // last frame should be filled with [null, null, null]
       i !== 10 ? this.initFrame(i, [null, null]) : this.initFrame(i, [null, null, null]);
     }
   }
@@ -179,7 +180,7 @@ export class BowlingFramesComponent {
         if (item.strike) {
           item.score = this.frames[i - 1].score + 10 + this.frames[i + 1].frame[0] + this.frames[i + 1].frame[1];
         } else if (isSpare) {
-          item.score = 10 + this.frames[i - 1].score + this.frames[i + 1].frame[0];
+          item.score = 10 + this.frames[i - 1]?.score + this.frames[i + 1]?.frame[0];
         } else {
           item.score = this.frames[i - 1].score + item.frame[0] + item.frame[1];
         }
@@ -188,10 +189,11 @@ export class BowlingFramesComponent {
   }
 
   private sumOneFrames(): number {
-    return this.activeFrame.frame.reduce((item, acc) => acc + item, 0);
+    return this.activeFrame.frame.reduce((item, curr) => curr + item, 0);
   }
 
   private getStrike(pin: number): void {
+    console.log('get strike');
     if (this.filledFrame === 0) {
       this.activeFrame.frame[0] = pin;
       this.totalScore -= 10;
@@ -202,14 +204,16 @@ export class BowlingFramesComponent {
       this.addScore();
       this.totalScore += this.sumOneFrames();
       this.resetPins();
-      this.incrementFrame();
+      if (this.activeFrame.id !== 10) {
+        this.incrementFrame();
+      }
     }
-    if (!this.activeFrame?.strike && this.filledFrame !== 0) {
-      this.activeFrame.showScore = true;
-      this.frames.filter(item => item.strike).forEach((frame, key) => {
-        frame.showScore = true;
-      });
-    }
+    // if (!this.activeFrame?.strike && this.filledFrame !== 0) {
+    //   this.activeFrame.showScore = true;
+    //   this.frames.filter(item => item.strike).forEach((frame, key) => {
+    //     frame.showScore = true;
+    //   });
+    // }
   }
 
   private addPinToFrame(pin: number): void {
