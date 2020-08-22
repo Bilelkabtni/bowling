@@ -321,7 +321,7 @@ export class BowlingFramesComponent {
   }
 
   private addSpare(): void {
-    this.activeFrame.score = 10 + this.lastFrame.score;
+    this.activeFrame.score = 10 + this.lastFrame?.score;
     this.activeFrame.spare = true;
     this.activeFrame.showScore = false;
   }
