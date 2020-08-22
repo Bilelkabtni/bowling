@@ -215,7 +215,8 @@ export class BowlingFramesComponent {
       // console.log('11');
       this.activeFrame.frame[0] = pin;
       this.activeFrame.score += pin;
-      this.lastFrame.showScore = true;
+      this.activeFrame.showScore = false;
+      this.activeFrame.score = this.activeFrame.score + this.lastFrame.score ;
       this.totalScore -= 10;
     } else {
       // console.log('22');
@@ -223,7 +224,7 @@ export class BowlingFramesComponent {
       this.setTotalScore();
       this.lastFrame.score = this.lastFrame.score + this.sumOneFrames();
       this.addScore();
-      // this.totalScore += this.sumOneFrames();
+      this.totalScore += this.sumOneFrames();
       this.resetPins();
       if (!this.isLastFrame) {
         this.incrementFrame();
