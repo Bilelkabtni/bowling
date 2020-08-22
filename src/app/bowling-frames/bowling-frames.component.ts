@@ -197,7 +197,7 @@ export class BowlingFramesComponent {
         if (item.strike) {
           item.score = this.frames[i - 1].score + 10 + this.frames[i + 1].frame[0] + this.frames[i + 1].frame[1];
         } else if (isSpare) {
-          item.score = 10 + this.frames[i - 1]?.score + (this.frames[i + 1]?.frame[0] || this.frames[i]?.frame[0]);
+          item.score = 10 + this.frames[i - 1]?.score + (this.frames[i + 1].frame[0] || this.frames[i].frame[0]);
         } else {
           item.score = this.frames[i - 1].score + item.frame[0] + item.frame[1];
         }
