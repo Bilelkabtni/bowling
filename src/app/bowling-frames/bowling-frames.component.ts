@@ -15,6 +15,8 @@ export class BowlingFramesComponent {
   currentFrame = 0;
   totalScore = 300;
 
+  hasBonus
+
   constructor() {
     // init frame
     for (let i = 1; i <= 10; i++) {
@@ -25,7 +27,7 @@ export class BowlingFramesComponent {
 
   // the hdcp is the maximum score
   get hdcp(): number {
-    return Math.max(...this.frames.map(o => o.score), 0);
+    return Math.max(...this.frames.map(o => o.score || 0), 0);
   }
 
   get isLastFrame(): boolean {
