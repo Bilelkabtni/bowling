@@ -46,10 +46,6 @@ export class BowlingFramesComponent {
     return this.frames[this.currentFrame];
   }
 
-  protected get activeFrame(): Bowling {
-    return this.frames[this.currentFrame];
-  }
-
   // todo reactor this to one func or create a prototype
   protected get latestFiledFrame(): number {
     let index = 0;
@@ -73,12 +69,7 @@ export class BowlingFramesComponent {
       }
     }
 
-    console.log('currentRoll', this.currentRoll)
-
-    if (this.currentRoll.length === 2) {
-      this.rolls[this.currentFrame] = [];
-      this.frames[this.currentFrame].frame = [null, null];
-    }
+    this.resetActiveFrame();
 
     this.addFrame(pin);
     this.calculateScore();
@@ -127,7 +118,7 @@ export class BowlingFramesComponent {
   switchFrame(index: number): void {
     const lastCurrent: number = this.currentFrame;
     this.currentFrame = index;
-    if (this.rolls[this.currentFrame - 1].length <= 1 ) {
+    if (this.rolls[this.currentFrame - 1].length <= 1) {
       alert('please fill the latest frame');
       this.currentFrame = lastCurrent;
     }
@@ -152,6 +143,20 @@ export class BowlingFramesComponent {
   protected activateFrame(): void {
     this.deactivateFrame();
     this.selectedFrame.active = true;
+  }
+
+  private resetActiveFrame(): void {
+    if (this.currentRoll.length === 2 && !this.hasBonus) {
+      this.rolls[this.currentFrame] = [];
+      this.frames[this.currentFrame].frame = [null, null];
+      this.resetPins();
+    }
+
+    if (this.currentRoll.length === 3) {
+      this.rolls[this.currentFrame] = [];
+      this.frames[this.currentFrame].frame = [null, null, null];
+      this.resetPins();
+    }
   }
 
   private displayOneFrame(pin: number): void {
@@ -191,9 +196,7 @@ export class BowlingFramesComponent {
       frame,
       score: 0,
       active: false,
-      showScore: true,
-      spare: false,
-      strike: false
+      showScore: true
     });
   }
 
