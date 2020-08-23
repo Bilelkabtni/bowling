@@ -82,6 +82,7 @@ export class BowlingFramesComponent {
       this.selectedFrame.frame[0] = pin;
     } else if (this.selectedFrame.frame[1] === null) {
       this.selectedFrame.frame[1] = pin;
+      this.resetPins();
     } else if (this.selectedFrame.frame[2] === null) {
       this.selectedFrame.frame[2] = pin;
     }
