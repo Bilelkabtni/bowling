@@ -1,5 +1,5 @@
-import {Component} from '@angular/core';
 import {Bowling} from 'src/app/bowling-frames/bowling.interface';
+import {Component} from '@angular/core';
 
 @Component({
   selector: 'app-bowling-frames',
@@ -8,6 +8,8 @@ import {Bowling} from 'src/app/bowling-frames/bowling.interface';
 })
 export class BowlingFramesComponent {
   pins = this.fillPins();
+  rolls = [[], [], [], [], [],[],[],[],[],[]];
+
 
   frames: Bowling[] = [];
   currentFrame = 0;
@@ -59,7 +61,7 @@ export class BowlingFramesComponent {
     let index = 0;
     for (let i = 0; i <= this.frames.length; i++) {
       const filled: number = this.frames[i]?.frame.filter(item => item !== null).length;
-      if (filled === 2 || filled === 3) {
+      if (filled <= 3 && filled >= 1) {
         index = i;
       }
     }
@@ -81,6 +83,8 @@ export class BowlingFramesComponent {
      Display Pins Value
    */
   displayPins(pin: number): void {
+    this.rolls[this.currentFrame].push(pin);
+    console.log(this.rolls);
     if (pin !== 10) {
       this.pins = [];
       for (let i = 0; i <= (10 - pin); i++) {
@@ -88,42 +92,8 @@ export class BowlingFramesComponent {
       }
     }
 
-    if (this.activeFrame?.strike && !this.isLastFrame) {
-      console.log('already strike');
-      this.activeFrame.strike = false;
-      this.activeFrame.spare = false;
-      this.activeFrame.showScore = true;
-      this.activeFrame.frame[0] = null;
-      this.activeFrame.frame[1] = null;
-      if (this.isLastFrame) {
-        this.activeFrame.frame[2] = null;
-      }
-    }
-
-    // decrement while ids are from 1 to 10
-    if (this.currentFrame === 10) {
-      this.decrementFrame();
-    }
-
-    // add frame independently from bonus logic
-    if ((this.filledFrame <= 2 && !this.isLastFrame) || (this.isLastFrame && pin !== 10)) {
-      // console.log('add fra addBonus');
-      // add bonus
-      if (this.activeFrame?.id === 10 && this.filledFrame === 2) {
-        console.log('11111111111111');
-        this.addBonus(pin);
-      } else {
-        console.log('22222222222');
-        this.addFrames(pin);
-      }
-    } else {
-      this.addStrikeToLasFrame(pin);
-    }
-
+    this.addFrames(pin);
     this.calculateAllScore();
-
-    // show all score
-    // this.showScore();
   }
 
   trackById(frame: Bowling): number {
@@ -133,19 +103,19 @@ export class BowlingFramesComponent {
   selectFrame(index: number): void {
     this.currentFrame = index;
     // block the move when the last frame is empty
-    if (this.lastFilledFrame === 2 && index !== 0 || this.lastFrame?.strike) {
-      this.activateFrame();
-    } else {
-      // Case: user click on the first frame
-      if (this.currentFrame !== 0) {
-        alert('please fill the last frame');
-        this.currentFrame = this.latestUnFiledFrame;
-        this.activateFrame();
-      } else {
-        this.currentFrame = 0;
-        this.activateFrame();
-      }
-    }
+    // if (this.lastFilledFrame === 2 && index !== 0 || this.lastFrame?.strike) {
+    //   this.activateFrame();
+    // } else {
+    //   // Case: user click on the first frame
+    //   if (this.currentFrame !== 0) {
+    //     alert('please fill the last frame');
+    //     this.currentFrame = this.latestUnFiledFrame;
+    //     this.activateFrame();
+    //   } else {
+    //     this.currentFrame = 0;
+    //     this.activateFrame();
+    //   }
+    // }
   }
 
   protected incrementFrame() {
@@ -161,7 +131,7 @@ export class BowlingFramesComponent {
   }
 
   protected addScore(): void {
-    this.activeFrame.score = this.lastFrame.score + this.sumOneFrames();
+    // this.activeFrame.score = this.lastFrame.score + this.sumOneFrames();
   }
 
   /*
@@ -186,7 +156,7 @@ export class BowlingFramesComponent {
         case 2:
           if (this.activeFrame.strike || this.activeFrame.spare) {
             this.activeFrame.frame[2] = pin;
-            this.activeFrame.score += 10;
+            // this.activeFrame.score += 10;
             this.activeFrame.strike = true;
           } else {
             this.currentFrame = 0;
@@ -195,22 +165,16 @@ export class BowlingFramesComponent {
           break;
         case 1:
           this.activeFrame.frame[1] = pin;
-          this.activeFrame.score += 10;
+          // this.activeFrame.score += 10;
           this.activeFrame.strike = true;
           break;
         case 0:
           this.activeFrame.frame[0] = pin;
-          this.activeFrame.score += 10;
+          // this.activeFrame.score += 10;
           this.activeFrame.strike = true;
           break;
       }
     }
-  }
-
-  private showScore(): void {
-    this.frames.forEach(item => {
-      item.showScore = item.spare || item.strike || item.showScore;
-    });
   }
 
   private initFrame(id: number, frame: number[]): void {
@@ -226,50 +190,62 @@ export class BowlingFramesComponent {
   }
 
   private calculateAllScore(): void {
-    for (let i = 0; i <= this.latestFiledFrame; i++) {
-      const item = this.frames[i];
-      const isSpare = (item.frame[0] + item.frame[1]) === 10;
-      // console.log('activeFrame', i)
-      if (item.id >= this.activeFrame.id && this.lastFrame) {
-        if (item.strike) {
-          item.score = this.frames[i - 1]?.score + 10 + this.frames[i + 1].frame[0] + this.frames[i + 1].frame[1];
-        } else if (isSpare) {
-          item.score = 10 + this.frames[i - 1]?.score + (this.frames[i + 1]?.frame[0] || this.frames[i]?.frame[0]);
-        } else {
-          item.score = this.frames[i - 1].score + item.frame[0] + item.frame[1];
+    let sumOfScore = 0;
+    let hasBonus = false;
+
+    this.rolls.forEach((roll, index) => {
+      const isSpare = roll[0] + roll[1] === 10;
+      const isStrike = roll[0] === 10 && index < 9;
+
+      if (index === 9) {
+        hasBonus = isSpare ||  roll[0] === 10 || roll[1] === 10;
+
+        if (hasBonus) {
+          sumOfScore += roll[0] + roll[1] + roll[2];
+          this.frames[index].score = sumOfScore;
+          this.frames[index].showScore = true;
         }
+      } else
+      if (isStrike) { // strike
+        if (this.rolls[index + 1][0] === 10 && index !== 8) {
+          sumOfScore += 10 + 10 + this.rolls[index + 2][0];
+          this.frames[index].score = sumOfScore;
+          this.frames[index].showScore = true;
+        } else if (index === 8) {
+          sumOfScore += 10 + 10 + this.rolls[index + 1][0];
+          this.frames[index].score = sumOfScore;
+          this.frames[index].showScore = true;
+        } else {
+          sumOfScore += 10 + this.rolls[index + 1][0] +  this.rolls[index + 1][1];
+          this.frames[index].score = sumOfScore;
+          this.frames[index].showScore = true;
+        }
+
+      } else if (isSpare) {
+        sumOfScore += 10 + this.rolls[index + 1][0];
+        this.frames[index].score = sumOfScore;
+        this.frames[index].showScore = true;
+      } else {
+        sumOfScore += roll[0] + roll[1];
+        this.frames[index].score = sumOfScore;
+        this.frames[index].showScore = true;
       }
-    }
+    });
   }
 
   private sumOneFrames(): number {
-    return this.activeFrame.frame.reduce((item, curr) => curr + item, 0);
+    return 0;
   }
 
   private getStrike(pin: number): void {
     if (this.filledFrame === 0) {
       this.activeFrame.frame[0] = pin;
-      this.activeFrame.score += pin;
-      this.activeFrame.showScore = false;
-      this.activeFrame.score = this.activeFrame.score + this.lastFrame.score;
-      this.totalScore -= 10;
     } else {
       this.activeFrame.frame[1] = pin;
-      this.setTotalScore();
-      this.lastFrame.score = this.lastFrame.score + this.sumOneFrames();
-      this.addScore();
-      this.totalScore += this.sumOneFrames();
       this.resetPins();
       if (!this.isLastFrame) {
         this.incrementFrame();
       }
-    }
-    if (!this.activeFrame?.strike && this.filledFrame !== 0) {
-      this.activeFrame.showScore = true;
-      this.frames.filter(item => item.strike).forEach((frame, key) => {
-        this.activeFrame.score += pin;
-        frame.showScore = true;
-      });
     }
   }
 
@@ -348,20 +324,20 @@ export class BowlingFramesComponent {
   private sumOfFrames() {
     // need only the sum if one index
     if (this.currentFrame === 0) {
-      this.activeFrame.score = this.sumOneFrames();
+      //  this.activeFrame.score = this.sumOneFrames();
     } else {
-      this.addScore();
+      // this.addScore();
     }
   }
 
   private addSpare(): void {
-    this.activeFrame.score = 10 + this.lastFrame?.score;
+    // this.activeFrame.score = 10 + this.lastFrame?.score;
     this.activeFrame.spare = true;
     this.activeFrame.showScore = false;
   }
 
   private showSpare(pin: number): void {
-    this.lastFrame.score = this.lastFrame.score + pin;
+    //  this.lastFrame.score = this.lastFrame.score + pin;
     this.lastFrame.showScore = true;
     this.lastFrame.spare = false;
   }
