@@ -15,7 +15,7 @@ export class BowlingFramesComponent {
   currentFrame = 0;
   totalScore = 300;
 
-  hasBonus
+  hasBonus = false;
 
   constructor() {
     // init frame
@@ -30,13 +30,25 @@ export class BowlingFramesComponent {
     return Math.max(...this.frames.map(o => o.score || 0), 0);
   }
 
-  get isLastFrame(): boolean {
-    return this.activeFrame?.id === 10;
-  }
+  // get isLastFrame(): boolean {
+  //   return this.activeFrame?.id === 10;
+  // }
 
   /* *
       Helpers
    */
+
+  get currentRoll(): number[] {
+    return this.rolls[this.currentFrame];
+  }
+
+  get isLastFrame(): boolean {
+    return this.currentFrame === 9;
+  }
+
+  get selectedFrame(): Bowling {
+    return this.frames[this.currentFrame];
+  }
 
   protected get activeFrame(): Bowling {
     return this.frames[this.currentFrame];
@@ -68,26 +80,40 @@ export class BowlingFramesComponent {
 
     this.addFrame(pin);
     this.calculateAllScore();
-    console.log('frame', this.frames)
+    console.log('frame', this.frames);
   }
 
   addFrame(pin: number): void {
-    if (this.rolls[this.currentFrame].length <= 2) {
-      this.rolls[this.currentFrame].push(pin);
-      if (pin === 10) {
-        this.frames[this.currentFrame].frame[1] = pin;
-        if (this.currentFrame !== 9) {
-          this.incrementFrame();
-          this.activateFrame();
+    if (this.rolls[this.currentFrame].length <= 1 || (this.hasBonus && this.currentRoll.length !== 3)) {
+      if (pin === 10 && this.isLastFrame || this.currentRoll.length === 2 && this.hasBonus) {
+        this.hasBonus = true;
+        if (this.selectedFrame.frame[0] === null) {
+          this.selectedFrame.frame[0] = pin;
+        } else if (this.selectedFrame.frame[1] === null) {
+          this.selectedFrame.frame[1] = pin;
+        } else if (this.selectedFrame.frame[2] === null) {
+          this.selectedFrame.frame[2] = pin;
         }
+        this.rolls[this.currentFrame].push(pin);
+        console.log('this.rolls', this.rolls);
       } else {
-        this.frames[this.currentFrame].frame[0] = pin;
-        if (this.rolls[this.currentFrame].length === 2) {
-          this.frames[this.currentFrame].frame = this.rolls[this.currentFrame];
-          this.resetPins();
-          if (this.currentFrame !== 9) {
+        this.rolls[this.currentFrame].push(pin);
+        this.addBonus();
+        if (pin === 10) {
+          this.frames[this.currentFrame].frame[1] = pin;
+          if (!this.isLastFrame) {
             this.incrementFrame();
             this.activateFrame();
+          }
+        } else {
+          this.frames[this.currentFrame].frame[0] = pin;
+          if (this.rolls[this.currentFrame].length === 2) {
+            this.frames[this.currentFrame].frame = this.rolls[this.currentFrame];
+            this.resetPins();
+            if (this.currentFrame !== 9) {
+              this.incrementFrame();
+              this.activateFrame();
+            }
           }
         }
       }
@@ -122,10 +148,6 @@ export class BowlingFramesComponent {
     this.currentFrame += 1;
   }
 
-  protected decrementFrame() {
-    this.currentFrame -= 1;
-  }
-
   /*
       Fill all pins form 1 to 10
    */
@@ -140,6 +162,12 @@ export class BowlingFramesComponent {
   protected activateFrame(): void {
     this.deactivateFrame();
     this.activeFrame.active = true;
+  }
+
+  private addBonus(): void {
+    const isSpare: boolean = this.currentRoll[0] + this.currentRoll[1] === 10;
+    const isStrike: boolean = this.currentRoll[0] === 10 || this.currentRoll[1] === 10;
+    this.hasBonus = (isSpare || isStrike) && this.isLastFrame && this.currentRoll.length < 3;
   }
 
   private initFrame(id: number, frame: number[]): void {
