@@ -117,9 +117,9 @@ export class BowlingFramesComponent {
   }
 
   switchFrame(index: number): void {
-    const lastCurrent: number = this.currentFrame;
+    const lastCurrent: number = this.currentFrame || 0;
     this.currentFrame = index;
-    if (this.rolls[this.currentFrame - 1].length <= 1) {
+    if (this.rolls[this.currentFrame - 1]?.length <= 1) {
       alert('please fill the latest frame');
       this.currentFrame = lastCurrent;
     }
@@ -206,43 +206,56 @@ export class BowlingFramesComponent {
     let hasBonus = false;
 
     this.rolls.forEach((roll, index) => {
-      const isSpare = roll[0] + roll[1] === 10;
-      const isStrike = roll[0] === 10 && index < 9;
+      // throw index
+      const currThrow: number = roll[0];
+      const nextThrow: number = roll[1];
+      const bonusThrow: number = roll[2];
+
+      // frame index
+      const currFrame: Bowling = this.frames[index];
+
+      // roll index
+      const nextRoll: number[] = this.rolls[index + 1];
+      const nextTowRoll: number[] = this.rolls[index + 2];
+
+      // add bonus score
+      const isSpare = currThrow + nextThrow === 10;
+      const isStrike = currThrow === 10 && index < 9;
 
       if (index === 9) {
-        hasBonus = isSpare || roll[0] === 10 || roll[1] === 10;
+        hasBonus = isSpare || currThrow === 10 || nextThrow === 10;
         if (hasBonus) {
-          sumOfScore += roll[0] + roll[1] + roll[2];
-          this.frames[index].score = sumOfScore;
-          this.frames[index].showScore = true;
+          sumOfScore += currThrow + nextThrow + bonusThrow;
+          currFrame.score = sumOfScore;
+          currFrame.showScore = true;
         } else {
-          sumOfScore += roll[0] + roll[1];
-          this.frames[index].score = sumOfScore;
-          this.frames[index].showScore = true;
+          sumOfScore += currThrow + nextThrow;
+          currFrame.score = sumOfScore;
+          currFrame.showScore = true;
         }
       } else if (isStrike) { // strike
-        if (this.rolls[index + 1][0] === 10 && index !== 8) {
-          sumOfScore += 10 + 10 + this.rolls[index + 2][0];
-          this.frames[index].score = sumOfScore;
-          this.frames[index].showScore = true;
+        if (nextRoll[0] === 10 && index !== 8) {
+          sumOfScore += 10 + 10 + nextTowRoll[0];
+          currFrame.score = sumOfScore;
+          currFrame.showScore = true;
         } else if (index === 8) {
-          sumOfScore += 10 + 10 + this.rolls[index + 1][0];
-          this.frames[index].score = sumOfScore;
-          this.frames[index].showScore = true;
+          sumOfScore += 10 + 10 + nextRoll[0];
+          currFrame.score = sumOfScore;
+          currFrame.showScore = true;
         } else {
-          sumOfScore += 10 + this.rolls[index + 1][0] + this.rolls[index + 1][1];
-          this.frames[index].score = sumOfScore;
-          this.frames[index].showScore = true;
+          sumOfScore += 10 + nextRoll[0] + nextRoll[1];
+          currFrame.score = sumOfScore;
+          currFrame.showScore = true;
         }
 
       } else if (isSpare) {
-        sumOfScore += 10 + this.rolls[index + 1][0];
-        this.frames[index].score = sumOfScore;
-        this.frames[index].showScore = true;
+        sumOfScore += 10 + nextRoll[0];
+        currFrame.score = sumOfScore;
+        currFrame.showScore = true;
       } else {
-        sumOfScore += roll[0] + roll[1];
-        this.frames[index].score = sumOfScore;
-        this.frames[index].showScore = true;
+        sumOfScore += currThrow + nextThrow;
+        currFrame.score = sumOfScore;
+        currFrame.showScore = true;
       }
     });
   }
