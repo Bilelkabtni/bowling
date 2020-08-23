@@ -73,6 +73,13 @@ export class BowlingFramesComponent {
       }
     }
 
+    console.log('currentRoll', this.currentRoll)
+
+    if (this.currentRoll.length === 2) {
+      this.rolls[this.currentFrame] = [];
+      this.frames[this.currentFrame].frame = [null, null];
+    }
+
     this.addFrame(pin);
     this.calculateScore();
     console.log('frame', this.frames);
@@ -117,22 +124,14 @@ export class BowlingFramesComponent {
     return frame.id;
   }
 
-  selectFrame(index: number): void {
+  switchFrame(index: number): void {
+    const lastCurrent: number = this.currentFrame;
     this.currentFrame = index;
-    // block the move when the last frame is empty
-    // if (this.lastFilledFrame === 2 && index !== 0 || this.lastFrame?.strike) {
-    //   this.activateFrame();
-    // } else {
-    //   // Case: user click on the first frame
-    //   if (this.currentFrame !== 0) {
-    //     alert('please fill the last frame');
-    //     this.currentFrame = this.latestUnFiledFrame;
-    //     this.activateFrame();
-    //   } else {
-    //     this.currentFrame = 0;
-    //     this.activateFrame();
-    //   }
-    // }
+    if (this.rolls[this.currentFrame - 1].length <= 1 ) {
+      alert('please fill the latest frame');
+      this.currentFrame = lastCurrent;
+    }
+    this.activateFrame();
   }
 
   protected incrementFrame() {
@@ -152,7 +151,7 @@ export class BowlingFramesComponent {
 
   protected activateFrame(): void {
     this.deactivateFrame();
-    this.activeFrame.active = true;
+    this.selectedFrame.active = true;
   }
 
   private displayOneFrame(pin: number): void {

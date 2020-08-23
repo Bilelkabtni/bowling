@@ -4,6 +4,4 @@ export interface Bowling {
   score: number;
   active: boolean;
   showScore: boolean;
-  spare: boolean;
-  strike: boolean;
 }

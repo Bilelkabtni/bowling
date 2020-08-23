@@ -10,7 +10,8 @@
   <div class="container" *ngFor="let frame of frames; let index= index">
     <h2 class="text-center">{{index + 1}}</h2>
     <div class="pins js-center"
-         (click)="selectFrame(index)"
+         [ngClass]="{'active': frame.active }"
+         (click)="switchFrame(index)"
     >
       <div class="pins" *ngFor="let item of frame.frame; let index= index; trackBy:trackById">
         <p class="odd">
@@ -18,11 +19,11 @@
         </p>
       </div>
     </div>
-    <h3 class="no text-center" *ngIf="frame?.score && frame?.showScore">{{frame?.score}}</h3>
+    <h3 class="no text-center" *ngIf="frames[index]?.score && frames[index]?.showScore">{{frame?.score}}</h3>
   </div>
 </div>
 
-<!--<h1 class="mgl" *ngIf="totalScore">MAX Possible: {{totalScore}}</h1>-->
+<h1 class="mgl" *ngIf="totalScore">MAX Possible: {{totalScore}}</h1>
 <h1 class="mgl">HDCP Score: {{hdcp}}</h1>
 
 
