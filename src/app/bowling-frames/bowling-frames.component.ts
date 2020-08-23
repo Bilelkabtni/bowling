@@ -30,10 +30,6 @@ export class BowlingFramesComponent {
     return Math.max(...this.frames.map(o => o.score || 0), 0);
   }
 
-  // get isLastFrame(): boolean {
-  //   return this.activeFrame?.id === 10;
-  // }
-
   /* *
       Helpers
    */
@@ -70,7 +66,6 @@ export class BowlingFramesComponent {
      Display Pins Value
    */
   displayPins(pin: number): void {
-    // console.log(this.rolls);
     if (pin !== 10) {
       this.pins = [];
       for (let i = 0; i <= (10 - pin); i++) {
@@ -79,42 +74,38 @@ export class BowlingFramesComponent {
     }
 
     this.addFrame(pin);
-    this.calculateAllScore();
+    this.calculateScore();
     console.log('frame', this.frames);
   }
 
+  addStrikeToLatestFrame(pin: number): void {
+    this.hasBonus = true;
+    if (this.selectedFrame.frame[0] === null) {
+      this.selectedFrame.frame[0] = pin;
+    } else if (this.selectedFrame.frame[1] === null) {
+      this.selectedFrame.frame[1] = pin;
+    } else if (this.selectedFrame.frame[2] === null) {
+      this.selectedFrame.frame[2] = pin;
+    }
+    this.currentRoll.push(pin);
+  }
+
   addFrame(pin: number): void {
-    if (this.rolls[this.currentFrame].length <= 1 || (this.hasBonus && this.currentRoll.length !== 3)) {
-      if (pin === 10 && this.isLastFrame || this.currentRoll.length === 2 && this.hasBonus) {
-        this.hasBonus = true;
-        if (this.selectedFrame.frame[0] === null) {
-          this.selectedFrame.frame[0] = pin;
-        } else if (this.selectedFrame.frame[1] === null) {
-          this.selectedFrame.frame[1] = pin;
-        } else if (this.selectedFrame.frame[2] === null) {
-          this.selectedFrame.frame[2] = pin;
-        }
-        this.rolls[this.currentFrame].push(pin);
+    if (
+      this.currentRoll.length <= 1
+      || this.hasBonus && this.currentRoll.length !== 3) {
+      if (
+        pin === 10
+        && this.isLastFrame
+        || this.currentRoll.length === 2
+        && this.hasBonus) {
+        this.addStrikeToLatestFrame(pin);
         console.log('this.rolls', this.rolls);
       } else {
-        this.rolls[this.currentFrame].push(pin);
-        this.addBonus();
-        if (pin === 10) {
-          this.frames[this.currentFrame].frame[1] = pin;
-          if (!this.isLastFrame) {
-            this.incrementFrame();
-            this.activateFrame();
-          }
-        } else {
-          this.frames[this.currentFrame].frame[0] = pin;
-          if (this.rolls[this.currentFrame].length === 2) {
-            this.frames[this.currentFrame].frame = this.rolls[this.currentFrame];
-            this.resetPins();
-            if (this.currentFrame !== 9) {
-              this.incrementFrame();
-              this.activateFrame();
-            }
-          }
+        this.displayOneFrame(pin);
+        // just for displaying empty throw [null]
+        if (this.isLastFrame && !this.hasBonus) {
+          this.selectedFrame.frame[2] = null;
         }
       }
     } else {
@@ -164,6 +155,31 @@ export class BowlingFramesComponent {
     this.activeFrame.active = true;
   }
 
+  private displayOneFrame(pin: number): void {
+    this.currentRoll.push(pin); // add pin
+    this.addBonus(); // add bonus case of last frame
+
+    // strike we need to add 10 to last elem
+    if (pin === 10) {
+      this.selectedFrame.frame[1] = pin;
+      if (!this.isLastFrame) {
+        this.incrementFrame();
+        this.activateFrame();
+      }
+    } else {
+      this.selectedFrame.frame[0] = pin;
+      if (this.currentRoll.length === 2) {
+        this.selectedFrame.frame = this.currentRoll;
+        this.resetPins();
+        // no need to increment when we are in the last frame
+        if (!this.isLastFrame) {
+          this.incrementFrame();
+          this.activateFrame();
+        }
+      }
+    }
+  }
+
   private addBonus(): void {
     const isSpare: boolean = this.currentRoll[0] + this.currentRoll[1] === 10;
     const isStrike: boolean = this.currentRoll[0] === 10 || this.currentRoll[1] === 10;
@@ -182,7 +198,7 @@ export class BowlingFramesComponent {
     });
   }
 
-  private calculateAllScore(): void {
+  private calculateScore(): void {
     let sumOfScore = 0;
     let hasBonus = false;
 
