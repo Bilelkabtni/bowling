@@ -11,7 +11,6 @@
     <h2 class="text-center">{{index + 1}}</h2>
     <div class="pins js-center"
          (click)="selectFrame(index)"
-         [ngClass]="{'active': frame.active }"
     >
       <div class="pins" *ngFor="let item of frame.frame; let index= index; trackBy:trackById">
         <p class="odd">

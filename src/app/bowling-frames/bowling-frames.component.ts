@@ -1,6 +1,5 @@
 import {Bowling} from 'src/app/bowling-frames/bowling.interface';
 import {Component} from '@angular/core';
-import has = Reflect.has;
 
 @Component({
   selector: 'app-bowling-frames',
@@ -67,30 +66,31 @@ export class BowlingFramesComponent {
 
     this.addFrame(pin);
     this.calculateAllScore();
+    console.log('frame', this.frames)
   }
 
   addFrame(pin: number): void {
-    const isSpare: boolean = this.rolls[this.currentFrame][0] + this.rolls[this.currentFrame][1] === 10;
-    const isStrike: boolean = this.rolls[this.currentFrame][0] === 10 || this.rolls[this.currentFrame][1] === 10;
-    const hasBonus: boolean = (isSpare || isStrike) && this.currentFrame === 9;
-    this.rolls[this.currentFrame].push(pin);
-
-    if (pin === 10) {
-      this.frames[this.currentFrame].frame[1] = pin;
-      if (this.currentFrame !== 9) {
-        this.incrementFrame();
-        this.activateFrame();
-      }
-    } else {
-      this.frames[this.currentFrame].frame[0] = pin;
-      if (this.rolls[this.currentFrame].length === 2) {
-        this.frames[this.currentFrame].frame = this.rolls[this.currentFrame];
-        this.resetPins();
+    if (this.rolls[this.currentFrame].length <= 2) {
+      this.rolls[this.currentFrame].push(pin);
+      if (pin === 10) {
+        this.frames[this.currentFrame].frame[1] = pin;
         if (this.currentFrame !== 9) {
           this.incrementFrame();
           this.activateFrame();
         }
+      } else {
+        this.frames[this.currentFrame].frame[0] = pin;
+        if (this.rolls[this.currentFrame].length === 2) {
+          this.frames[this.currentFrame].frame = this.rolls[this.currentFrame];
+          this.resetPins();
+          if (this.currentFrame !== 9) {
+            this.incrementFrame();
+            this.activateFrame();
+          }
+        }
       }
+    } else {
+      this.resetPins();
     }
   }
 
@@ -162,9 +162,12 @@ export class BowlingFramesComponent {
 
       if (index === 9) {
         hasBonus = isSpare || roll[0] === 10 || roll[1] === 10;
-
         if (hasBonus) {
           sumOfScore += roll[0] + roll[1] + roll[2];
+          this.frames[index].score = sumOfScore;
+          this.frames[index].showScore = true;
+        } else {
+          sumOfScore += roll[0] + roll[1];
           this.frames[index].score = sumOfScore;
           this.frames[index].showScore = true;
         }
