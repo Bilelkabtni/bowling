@@ -10,8 +10,6 @@ export class BowlingPinsComponent {
   @Input() pins: number [] = [];
   @Output() selectedPin: EventEmitter<number> = new EventEmitter<number>();
 
-  constructor() { }
-
   addPin(pin: number): void {
     if (pin !== 10) {
       this.pins = [];
