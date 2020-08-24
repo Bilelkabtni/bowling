@@ -15,6 +15,10 @@
   box-shadow: 8px 3px 14px 3px rgba(0,0,0,.09), 0 8px 10px 1px rgba(0,0,0,.09);
 }
 
+.flex {
+  display: flex;
+}
+
 .text-center {
   text-align: center;
   margin: 0;
@@ -23,8 +27,30 @@
 button {
   color: $dark-gray;
   background-color: white;
-  border-color: $gray;
+  font-size: 0.8rem;
+  font-weight: bold;
+  padding: 1rem;
+  cursor: pointer;
+  border: 1px solid $gray;
   &:hover {
     background-color: $gray;
   }
+}
+
+h2 {
+  background-image: linear-gradient(200deg, $light-green 5%, $green);
+  border-bottom: 1px solid;
+  color: white;
+}
+
+h3 {
+  margin: 10px 0 !important;
+}
+
+.js-center {
+  justify-content: center;
+}
+
+.mgr {
+  margin-right: 0.7rem;
 }

@@ -19,16 +19,6 @@
   padding: 2rem;
 }
 
-.flex {
-  display: flex;
-}
-
-.pin {
-  padding: 1rem;
-  cursor: pointer;
-  border: 1px solid;
-}
-
 .score {
   .frame {
     padding: 1rem;
@@ -53,32 +43,9 @@
   background-color: $light-yellow;
 }
 
-h2 {
-  background-image: linear-gradient(200deg, #9dda47 5%, #4aaa23);
-  border-bottom: 1px solid;
-  color: white;
-}
-
 .no {
   margin: 0 !important;
   background-color: $yellow;
-}
-
-h3 {
-  margin: 10px 0 !important;
-}
-
-.js-center {
-  justify-content: center;
-}
-
-.mgr {
-  margin-right: 0.7rem;
-}
-
-button {
-  font-size: 0.8rem;
-  font-weight: bold;
 }
 
 .grid {

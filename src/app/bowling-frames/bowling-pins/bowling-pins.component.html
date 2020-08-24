@@ -1,0 +1,9 @@
+<div class="flex">
+  <div class="pins flex">
+    <button class="mgr"
+            *ngFor="let pin of pins; trackBy:trackByIndex"
+            (click)="addPin(pin)">
+      <span>{{pin}}</span>
+    </button>
+  </div>
+</div>

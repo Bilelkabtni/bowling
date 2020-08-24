@@ -10,10 +10,8 @@ export class BowlingFramesComponent {
   pins = this.fillPins();
   rolls = [[], [], [], [], [], [], [], [], [], []];
 
-
   frames: Bowling[] = [];
   currentFrame = 0;
-
   hasBonus = false;
 
   constructor() {
@@ -45,31 +43,11 @@ export class BowlingFramesComponent {
     return this.frames[this.currentFrame];
   }
 
-  // todo reactor this to one func or create a prototype
-  protected get latestFiledFrame(): number {
-    let index = 0;
-    for (let i = 0; i <= this.frames.length; i++) {
-      const filled: number = this.frames[i]?.frame.filter(item => item !== null).length;
-      if (filled <= 3 && filled >= 1) {
-        index = i;
-      }
-    }
-    return index;
-  }
-
   /*
      Display Pins Value
    */
   addPin(pin: number): void {
-    if (pin !== 10) {
-      this.pins = [];
-      for (let i = 0; i <= (10 - pin); i++) {
-        this.pins.push(i);
-      }
-    }
-
     this.resetActiveFrame();
-
     this.addPinToFrame(pin);
     this.calculateScore();
     console.log('frame', this.frames);
@@ -119,11 +97,12 @@ export class BowlingFramesComponent {
     const lastCurrent: number = this.currentFrame || 0;
     this.currentFrame = index;
     const currRollSize = this.rolls[this.currentFrame - 1]?.length;
-
+    // block moves when previous frame is empty
     if (currRollSize <= 1 || (this.isLastFrame && currRollSize <= 1)) {
       alert('Finish scoring current frame before selecting new frame');
       this.currentFrame = lastCurrent;
     }
+    console.log('index is', this.currentFrame);
     this.activateFrame();
   }
 
@@ -148,13 +127,15 @@ export class BowlingFramesComponent {
   }
 
   private resetActiveFrame(): void {
-    if (this.currentRoll.length === 2 && !this.hasBonus) {
+    if (this.currentRoll.length === 2 && !this.hasBonus
+      || (this.currentFrame === 0 && this.currentRoll.length === 2)) {
       this.rolls[this.currentFrame] = [];
       this.frames[this.currentFrame].frame = [null, null];
       this.resetPins();
     }
 
     if (this.currentRoll.length === 3) {
+      console.log('this.curr', this.currentRoll.length);
       this.rolls[this.currentFrame] = [];
       this.frames[this.currentFrame].frame = [null, null, null];
       this.resetPins();
@@ -243,10 +224,9 @@ export class BowlingFramesComponent {
           sumOfScore += 10 + nextRoll[0] + nextRoll[1];
           currFrame.score = sumOfScore;
           currFrame.showScore = true;
-          console.log('1', currFrame.score)
         }
 
-      } else if (isSpare) {
+      } else if (isSpare) { // spare
         sumOfScore += 10 + nextRoll[0];
         currFrame.score = sumOfScore;
         currFrame.showScore = true;
