@@ -76,8 +76,7 @@ export class BowlingFramesComponent {
   addPinToFrame(pin: number): void {
     // in case of last frame the user could add 10 to first or second throw
     if (this.currentRoll.length <= 1 || this.hasBonus && this.currentRoll.length !== 3) {
-      if (pin === 10 && this.isLastFrame
-        || this.currentRoll.length === 2 && this.hasBonus) {
+      if (pin === 10 && this.isLastFrame  || this.currentRoll.length === 2 && this.hasBonus) {
         this.addStrikeToLatestFrame(pin);
         console.log('this.rolls', this.rolls);
       } else {
@@ -132,7 +131,8 @@ export class BowlingFramesComponent {
   }
 
   private resetActiveFrame(): void {
-    if (this.currentRoll.length === 2 && !this.isLastFrame || this.currentRoll.includes(10)) {
+    if (this.currentRoll.length === 2 && !this.isLastFrame
+      || this.currentRoll.includes(10) && !this.isLastFrame) {
       this.rolls[this.currentFrame] = [];
       this.frames[this.currentFrame].frame = [null, null];
     }
@@ -168,6 +168,7 @@ export class BowlingFramesComponent {
       }
     }
   }
+
 
   private addBonus(): void {
     const isSpare: boolean = this.currentRoll[0] + this.currentRoll[1] === 10;
