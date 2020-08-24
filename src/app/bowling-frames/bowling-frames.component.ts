@@ -111,22 +111,22 @@ export class BowlingFramesComponent {
     this.activateFrame();
   }
 
-  protected incrementFrame() {
+  private incrementFrame() {
     this.currentFrame += 1;
   }
 
   /*
       Fill all pins form 1 to 10
    */
-  protected fillPins(): number[] {
+  private fillPins(): number[] {
     return Array.from(Array(11).keys());
   }
 
-  protected deactivateFrame(): void {
+  private deactivateFrame(): void {
     this.frames.map(frame => frame.active = false);
   }
 
-  protected activateFrame(): void {
+  private activateFrame(): void {
     this.deactivateFrame();
     this.selectedFrame.active = true;
   }
