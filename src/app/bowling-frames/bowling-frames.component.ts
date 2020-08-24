@@ -132,7 +132,7 @@ export class BowlingFramesComponent {
   }
 
   private resetActiveFrame(): void {
-    if (this.currentRoll.length === 2 && !this.isLastFrame) {
+    if (this.currentRoll.length === 2 && !this.isLastFrame || this.currentRoll.includes(10)) {
       this.rolls[this.currentFrame] = [];
       this.frames[this.currentFrame].frame = [null, null];
     }
