@@ -1,6 +1,6 @@
 <div class="flex">
   <div class="pins">
-    <button class="pin mgr" *ngFor="let pin of pins; let index= index" (click)="displayPins(pin)">
+    <button class="pin mgr" *ngFor="let pin of pins; let index= index" (click)="addPin(pin)">
       <span>{{pin}}</span>
     </button>
   </div>

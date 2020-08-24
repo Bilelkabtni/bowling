@@ -61,7 +61,7 @@ export class BowlingFramesComponent {
   /*
      Display Pins Value
    */
-  displayPins(pin: number): void {
+  addPin(pin: number): void {
     if (pin !== 10) {
       this.pins = [];
       for (let i = 0; i <= (10 - pin); i++) {
@@ -71,7 +71,7 @@ export class BowlingFramesComponent {
 
     this.resetActiveFrame();
 
-    this.addFrame(pin);
+    this.addPinToFrame(pin);
     this.calculateScore();
     console.log('frame', this.frames);
   }
@@ -89,7 +89,7 @@ export class BowlingFramesComponent {
     this.currentRoll.push(pin);
   }
 
-  addFrame(pin: number): void {
+  addPinToFrame(pin: number): void {
     if (
       this.currentRoll.length <= 1
       || this.hasBonus && this.currentRoll.length !== 3) {
@@ -119,8 +119,10 @@ export class BowlingFramesComponent {
   switchFrame(index: number): void {
     const lastCurrent: number = this.currentFrame || 0;
     this.currentFrame = index;
-    if (this.rolls[this.currentFrame - 1]?.length <= 1) {
-      alert('please fill the latest frame');
+    const currRollSize = this.rolls[this.currentFrame - 1]?.length;
+
+    if (currRollSize <= 1 || (this.isLastFrame && currRollSize <= 1)) {
+      alert('Finish scoring current frame before selecting new frame');
       this.currentFrame = lastCurrent;
     }
     this.activateFrame();
@@ -236,10 +238,6 @@ export class BowlingFramesComponent {
       } else if (isStrike) { // strike
         if (nextRoll[0] === 10 && index !== 8) {
           sumOfScore += 10 + 10 + nextTowRoll[0];
-          currFrame.score = sumOfScore;
-          currFrame.showScore = true;
-        } else if (index === 8) {
-          sumOfScore += 10 + 10 + nextRoll[0];
           currFrame.score = sumOfScore;
           currFrame.showScore = true;
         } else {
