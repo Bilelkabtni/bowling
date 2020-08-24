@@ -1,16 +1,17 @@
-import {Bowling} from 'src/app/bowling-frames/bowling.interface';
-import {Component} from '@angular/core';
+import {Component, ChangeDetectionStrategy} from '@angular/core';
+import {Frame} from 'src/app/bowling-frames/frame.interface';
 
 @Component({
   selector: 'app-bowling-frames',
   templateUrl: './bowling-frames.component.html',
-  styleUrls: ['./bowling-frames.component.scss']
+  styleUrls: ['./bowling-frames.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BowlingFramesComponent {
   pins = this.fillPins();
   rolls = [[], [], [], [], [], [], [], [], [], []];
 
-  frames: Bowling[] = [];
+  frames: Frame[] = [];
   currentFrame = 0;
   hasBonus = false;
 
@@ -39,7 +40,7 @@ export class BowlingFramesComponent {
     return this.currentFrame === 9;
   }
 
-  get selectedFrame(): Bowling {
+  get selectedFrame(): Frame {
     return this.frames[this.currentFrame];
   }
 
@@ -89,7 +90,7 @@ export class BowlingFramesComponent {
     }
   }
 
-  trackById(frame: Bowling): number {
+  trackById(frame: Frame): number {
     return frame.id;
   }
 
@@ -194,7 +195,7 @@ export class BowlingFramesComponent {
       const bonusThrow: number = roll[2];
 
       // frame index
-      const currFrame: Bowling = this.frames[index];
+      const currFrame: Frame = this.frames[index];
 
       // roll index
       const nextRoll: number[] = this.rolls[index + 1];

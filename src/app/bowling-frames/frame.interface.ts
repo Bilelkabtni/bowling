@@ -1,4 +1,4 @@
-export interface Bowling {
+export interface Frame {
   id: number;
   frame: any[];
   score: number;
