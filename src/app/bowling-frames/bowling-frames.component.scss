@@ -27,6 +27,13 @@
   }
 }
 
+.frame {
+  &:hover {
+    cursor: pointer;
+    background-color: $active;
+    transition: .7s ease;
+  }
+}
 
 .active {
   background-color: $active;

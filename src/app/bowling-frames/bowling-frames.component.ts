@@ -21,6 +21,8 @@ export class BowlingFramesComponent {
       // last frame should be filled with [null, null, null]
       i !== 10 ? this.initFrame(i, [null, null]) : this.initFrame(i, [null, null, null]);
     }
+    // activate first frame by default
+    this.activateFrame();
   }
 
   // the score is the maximum score value
@@ -51,7 +53,6 @@ export class BowlingFramesComponent {
     this.resetActiveFrame();
     this.addPinToFrame(pin);
     this.calculateScore();
-    console.log('frame', this.frames);
   }
 
   addStrikeToLatestFrame(pin: number): void {
@@ -74,7 +75,7 @@ export class BowlingFramesComponent {
   }
 
   addPinToFrame(pin: number): void {
-    // in case of last frame the user could add 10 to first or second throw
+    // in the last frame the user could add 10 to the first or second throw
     if (this.currentRoll.length <= 1 || this.hasBonus && this.currentRoll.length !== 3) {
       if (pin === 10 && this.isLastFrame  || this.currentRoll.length === 2 && this.hasBonus) {
         this.addStrikeToLatestFrame(pin);
@@ -131,14 +132,14 @@ export class BowlingFramesComponent {
   }
 
   private resetActiveFrame(): void {
+    // reset frame with index < 9
     if (this.currentRoll.length === 2 && !this.isLastFrame
       || this.currentRoll.includes(10) && !this.isLastFrame) {
       this.rolls[this.currentFrame] = [];
       this.frames[this.currentFrame].frame = [null, null];
     }
-
+    // reset last frame
     if (this.currentRoll.length === 3 && this.isLastFrame) {
-      console.log('this.curr', this.currentRoll.length);
       this.rolls[this.currentFrame] = [];
       this.frames[this.currentFrame].frame = [null, null, null];
     }
