@@ -13,7 +13,6 @@ export class BowlingFramesComponent {
 
   frames: Bowling[] = [];
   currentFrame = 0;
-  totalScore = 300;
 
   hasBonus = false;
 
@@ -25,8 +24,8 @@ export class BowlingFramesComponent {
     }
   }
 
-  // the hdcp is the maximum score
-  get hdcp(): number {
+  // the score is the maximum score value
+  get score(): number {
     return Math.max(...this.frames.map(o => o.score || 0), 0);
   }
 
@@ -244,6 +243,7 @@ export class BowlingFramesComponent {
           sumOfScore += 10 + nextRoll[0] + nextRoll[1];
           currFrame.score = sumOfScore;
           currFrame.showScore = true;
+          console.log('1', currFrame.score)
         }
 
       } else if (isSpare) {

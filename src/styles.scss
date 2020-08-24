@@ -1,14 +1,30 @@
 /* You can add global styles to this file, and also import other style files */
 
-//@import "styles/reset";
+@import "styles/variable";
+
+* {
+  font-family: Arial, sans-serif, "Segoe Script";
+}
 
 .game {
   &__container {
-    padding: 1rem;
+    padding: 0 1rem 1rem;
   }
+}
+.shadow {
+  box-shadow: 8px 3px 14px 3px rgba(0,0,0,.09), 0 8px 10px 1px rgba(0,0,0,.09);
 }
 
 .text-center {
   text-align: center;
   margin: 0;
+}
+
+button {
+  color: $dark-gray;
+  background-color: white;
+  border-color: $gray;
+  &:hover {
+    background-color: $gray;
+  }
 }

@@ -1,29 +1,32 @@
-<div class="flex">
-  <div class="pins">
-    <button class="pin mgr" *ngFor="let pin of pins; let index= index" (click)="addPin(pin)">
-      <span>{{pin}}</span>
-    </button>
-  </div>
-</div>
-
-<div class="grid">
-  <div class="container" *ngFor="let frame of frames; let index= index">
-    <h2 class="text-center">{{index + 1}}</h2>
-    <div class="pins js-center"
-         [ngClass]="{'active': frame.active }"
-         (click)="switchFrame(index)"
-    >
-      <div class="pins" *ngFor="let item of frame.frame; let index= index; trackBy:trackById">
-        <p class="odd">
-          <span>{{item === 10 ? 'x' : item}}</span>
-        </p>
-      </div>
+<div class="score-board shadow">
+  <div class="flex">
+    <div class="pins flex">
+      <button class="pin mgr" *ngFor="let pin of pins; let index= index" (click)="addPin(pin)">
+        <span>{{pin}}</span>
+      </button>
     </div>
-    <h3 class="no text-center" *ngIf="frames[index]?.score && frames[index]?.showScore">{{frame?.score}}</h3>
   </div>
+
+  <div class="grid">
+    <div class="container" *ngFor="let frame of frames; let index= index">
+      <h2 class="text-center">{{index + 1}}</h2>
+      <div class="flex js-center"
+           [ngClass]="{'active': frame.active }"
+           (click)="switchFrame(index)"
+      >
+        <div class="score flex" *ngFor="let item of frame.frame; let index= index; trackBy:trackById">
+          <p class="frame">
+            <span>{{item === 10 ? 'x' : item}}</span>
+          </p>
+        </div>
+      </div>
+      <h3 class="no text-center" *ngIf="frame?.score && frame?.showScore">{{frame?.score}}</h3>
+    </div>
+  </div>
+
+  <h1 class="score-result">HDCP Score: {{score}}</h1>
 </div>
 
-<h1 class="mgl" *ngIf="totalScore">MAX Possible: {{totalScore}}</h1>
-<h1 class="mgl">HDCP Score: {{hdcp}}</h1>
+
 
 
