@@ -65,20 +65,23 @@ export class BowlingFramesComponent {
       this.selectedFrame.frame[2] = pin;
     }
     this.currentRoll.push(pin);
+    // reset pin and go back to the first case in case last frame is filled
+    if (this.currentRoll.length === 3) {
+      this.resetPins();
+      this.currentFrame = 0;
+      this.activateFrame();
+    }
   }
 
   addPinToFrame(pin: number): void {
-    if (
-      this.currentRoll.length <= 1
-      || this.hasBonus && this.currentRoll.length !== 3) {
-      if (
-        pin === 10
-        && this.isLastFrame
-        || this.currentRoll.length === 2
-        && this.hasBonus) {
+    // in case of last frame the user could add 10 to first or second throw
+    if (this.currentRoll.length <= 1 || this.hasBonus && this.currentRoll.length !== 3) {
+      if (pin === 10 && this.isLastFrame
+        || this.currentRoll.length === 2 && this.hasBonus) {
         this.addStrikeToLatestFrame(pin);
         console.log('this.rolls', this.rolls);
       } else {
+        // display one frame
         this.displayOneFrame(pin);
         // just for displaying empty throw [null]
         if (this.isLastFrame && !this.hasBonus) {
@@ -86,6 +89,7 @@ export class BowlingFramesComponent {
         }
       }
     } else {
+      // reset pins
       this.resetPins();
     }
   }
@@ -97,9 +101,9 @@ export class BowlingFramesComponent {
   switchFrame(index: number): void {
     const lastCurrent: number = this.currentFrame || 0;
     this.currentFrame = index;
-    const currRollSize = this.rolls[this.currentFrame - 1]?.length;
+    const currRoll = this.rolls[this.currentFrame - 1];
     // block moves when previous frame is empty
-    if (currRollSize <= 1 || (this.isLastFrame && currRollSize <= 1)) {
+    if (currRoll?.length <= 1 && !currRoll.includes(10)) {
       alert('Finish scoring current frame before selecting new frame');
       this.currentFrame = lastCurrent;
     }
@@ -128,18 +132,15 @@ export class BowlingFramesComponent {
   }
 
   private resetActiveFrame(): void {
-    if (this.currentRoll.length === 2 && !this.hasBonus
-      || (this.currentFrame === 0 && this.currentRoll.length === 2)) {
+    if (this.currentRoll.length === 2 && !this.isLastFrame) {
       this.rolls[this.currentFrame] = [];
       this.frames[this.currentFrame].frame = [null, null];
-      this.resetPins();
     }
 
-    if (this.currentRoll.length === 3) {
+    if (this.currentRoll.length === 3 && this.isLastFrame) {
       console.log('this.curr', this.currentRoll.length);
       this.rolls[this.currentFrame] = [];
       this.frames[this.currentFrame].frame = [null, null, null];
-      this.resetPins();
     }
   }
 
