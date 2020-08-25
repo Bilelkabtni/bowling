@@ -15,7 +15,7 @@ describe('BowlingFramesComponent', () => {
     expect(comp).toBeTruthy();
   });
 
-  it('should create component', () => {
+  it('should add frames', () => {
     const comp = new BowlingFramesComponent();
     comp.frames = [
       {

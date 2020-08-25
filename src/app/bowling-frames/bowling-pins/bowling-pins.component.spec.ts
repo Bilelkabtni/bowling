@@ -1,7 +1,7 @@
 import {fakeAsync, ComponentFixture, TestBed} from '@angular/core/testing';
 import {BowlingPinsComponent} from './bowling-pins.component';
 
-describe('BowlingFramesComponent', () => {
+describe('BowlingPinsComponent', () => {
   let fixture: ComponentFixture<BowlingPinsComponent>;
   let component: BowlingPinsComponent;
   beforeEach(fakeAsync(() => {
